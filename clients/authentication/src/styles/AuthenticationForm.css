@@ -1,0 +1,29 @@
+.section-auth {
+  /* background-color: #9a616d; */
+  margin: 0;
+}
+
+.image-auth {
+  border-radius: 1rem 0 0 1rem;
+}
+
+i {
+  color: #ff6219;
+}
+
+h5 {
+  letter-spacing: 1px;
+}
+
+a {
+  color: #393f81;
+  text-decoration: none;
+}
+
+.register-link {
+  color: #393f81;
+}
+
+.card-auth {
+  border-radius: 1rem;
+}
