@@ -1,44 +1,54 @@
 const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
-  # Existing User Type
+  # Updated User Type to consolidate Nurse and Patient for simplicity
   type User {
-    username: String!
-  }
-
-  # New Types for Nurse and Patient
-  type Nurse {
     id: ID!
     name: String!
     email: String!
-    assignedPatients: [Patient!]
+    role: String! # 'nurse' or 'patient'
+    assignedPatients: [User] # Only for nurses
+    assignedNurse: User      # Only for patients
+    vitalSigns: [VitalSign]
+    motivationalTips: [MotivationalTip]
   }
 
-  type Patient {
+  type VitalSign {
     id: ID!
-    name: String!
-    age: Int!
-    medicalHistory: [String!]
-    nurse: Nurse
+    bodyTemperature: Float!
+    heartRate: Int!
+    bloodPressure: String!
+    respiratoryRate: Int!
+    date: String!
   }
 
-  # Extend Query Type
+  type MotivationalTip {
+    id: ID!
+    content: String!
+    createdAt: String!
+  }
+
   type Query {
     currentUser: User
-    getNurse(id: ID!): Nurse
-    getPatient(id: ID!): Patient
-    listNurses: [Nurse!]
-    listPatients: [Patient!]
+    getUser(id: ID!): User
+    listUsers(role: String): [User] # Filter by role
   }
 
-  # Extend Mutation Type
   type Mutation {
-    login(username: String!, password: String!): Boolean
-    register(username: String!, password: String!): Boolean
-    addNurse(name: String!, email: String!): Nurse
-    addPatient(name: String!, age: Int!): Patient
-    assignPatientToNurse(patientId: ID!, nurseId: ID!): Nurse
-    updatePatientInfo(id: ID!, name: String, age: Int): Patient
+    login(email: String!, password: String!): Boolean
+    register(name: String!, email: String!, password: String!, role: String!): User
+    assignPatientToNurse(patientId: ID!, nurseId: ID!): User
+    addVitalSign(userId: ID!, bodyTemperature: Float!, heartRate: Int!, bloodPressure: String!, respiratoryRate: Int!): VitalSign
+    addMotivationalTip(userId: ID!, content: String!): MotivationalTip
+    updateUser(
+    id: ID!,
+    name: String,
+    email: String,
+    password: String,
+    role: String,
+    assignedNurse: ID,
+    assignedPatients: [ID!]
+    ): User
   }
 `;
 

@@ -1,135 +1,147 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const Nurse = require("../models/Nurse"); // Assuming a Nurse model exists
-const Patient = require("../models/Patient"); // Assuming a Patient model exists
+const VitalSign = require("../models/VitalSigns");
+const MotivationalTip = require("../models/MotivationalTip");
 
 const resolvers = {
   Query: {
-    // Existing currentUser query
-    currentUser: (_, __, { req }) => {
+    currentUser: async (_, __, { req }) => {
       const token = req.cookies["token"];
       if (!token) {
+        console.error("No token found in cookies");
         return null;
-      }
-
+      };
       try {
         const decoded = jwt.verify(token, "your_secret_key");
-        return { username: decoded.username };
+        return User.findById(decoded.id);
       } catch (error) {
+        console.error("Token verification failed: ", error);
         return null;
       }
     },
-
-    // New Queries
-    getNurse: async (_, { id }) => {
-      const nurse = await Nurse.findById(id).populate("assignedPatients");
-      if (!nurse) {
-        throw new Error("Nurse not found");
-      }
-      return nurse;
+    getUser: async (_, { id }) => {
+      return await User.findById(id)
+        .populate("assignedPatients")
+        .populate("assignedNurse")
+        .populate("vitalSigns")
+        .populate("motivationalTips");
     },
-    getPatient: async (_, { id }) => {
-      const patient = await Patient.findById(id).populate("nurse");
-      if (!patient) {
-        throw new Error("Patient not found");
-      }
-      return patient;
-    },
-    listNurses: async () => {
-      return await Nurse.find().populate("assignedPatients");
-    },
-    listPatients: async () => {
-      return await Patient.find().populate("nurse");
+    listUsers: async (_, { role }) => {
+      return await User.find(role ? { role } : {}).populate("assignedPatients").populate("assignedNurse");
     },
   },
 
   Mutation: {
-    // Existing login mutation
-    login: async (_, { username, password }, { res }) => {
-      const user = await User.findOne({ username });
+    login: async (_, { email, password }, { res }) => {
+      const user = await User.findOne({ email });
       if (!user) {
         throw new Error("User not found");
       }
-
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
+  
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
         throw new Error("Invalid password");
       }
-
-      const token = jwt.sign({ username }, "your_secret_key", {
+  
+      // Generate a JWT token
+      const token = jwt.sign({ id: user._id, role: user.role }, "your_secret_key", {
         expiresIn: "1d",
       });
+  
+      // Store token in an HTTP-only cookie
       res.cookie("token", token, {
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        sameSite: "None", // Ensure cookie works across the same site
+        secure: true, // Ensure cookie is only sent over HTTPS
       });
-      return true;
+
+      console.log("Logged in user: ", user);
+      console.log("Token: ", token);
+  
+      return true; // Indicating successful login
     },
-
-    // Existing register mutation
-    register: async (_, { username, password }) => {
-      const existingUser = await User.findOne({ username });
-      if (existingUser) {
-        throw new Error("Username is already taken");
-      }
-
+    register: async (_, { name, email, password, role }) => {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({ username, password: hashedPassword });
-      await newUser.save();
-      return true;
-    },
-
-    // New Mutations
-    addNurse: async (_, { name, email }) => {
-      const newNurse = new Nurse({ name, email, assignedPatients: [] });
-      await newNurse.save();
-      return newNurse;
-    },
-    addPatient: async (_, { name, age }) => {
-      const newPatient = new Patient({ name, age });
-      await newPatient.save();
-      return newPatient;
-    },
+      const user = new User({ name, email, password: hashedPassword, role });
+      await user.save();
+      return user;
+    },updateUser: async (_, { id, name, email, password, role, assignedNurse, assignedPatients }) => {
+      const user = await User.findById(id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+    
+      // Update user fields if provided
+      if (name) user.name = name;
+      if (email) user.email = email;
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+      }
+      if (role) user.role = role;
+    
+      // Update relationships
+      if (assignedNurse && user.role === "patient") {
+        const nurse = await User.findById(assignedNurse);
+        if (!nurse || nurse.role !== "nurse") {
+          throw new Error("Invalid nurse ID");
+        }
+        user.assignedNurse = nurse._id;
+      }
+    
+      if (assignedPatients && user.role === "nurse") {
+        const patients = await User.find({ _id: { $in: assignedPatients }, role: "patient" });
+        if (patients.length !== assignedPatients.length) {
+          throw new Error("One or more assigned patients not found or invalid");
+        }
+        user.assignedPatients = assignedPatients;
+      }
+    
+      await user.save();
+      return user;
+    },    
     assignPatientToNurse: async (_, { patientId, nurseId }) => {
-      const nurse = await Nurse.findById(nurseId);
-      const patient = await Patient.findById(patientId);
+      const nurse = await User.findById(nurseId);
+      const patient = await User.findById(patientId);
 
-      if (!nurse || !patient) {
-        throw new Error("Nurse or Patient not found");
+      if (!nurse || !patient || nurse.role !== "nurse" || patient.role !== "patient") {
+        throw new Error("Invalid nurse or patient ID");
       }
 
       nurse.assignedPatients.push(patient._id);
-      patient.nurse = nurse._id;
+      patient.assignedNurse = nurse._id;
 
       await nurse.save();
       await patient.save();
 
       return nurse;
     },
-    updatePatientInfo: async (_, { id, name, age }) => {
-      const patient = await Patient.findById(id);
-      if (!patient) {
-        throw new Error("Patient not found");
-      }
-
-      if (name) patient.name = name;
-      if (age) patient.age = age;
-
-      await patient.save();
-      return patient;
+    addVitalSign: async (_, { userId, bodyTemperature, heartRate, bloodPressure, respiratoryRate }) => {
+      const vitalSign = new VitalSign({ user: userId, bodyTemperature, heartRate, bloodPressure, respiratoryRate });
+      await vitalSign.save();
+      return vitalSign;
+    },
+    addMotivationalTip: async (_, { userId, content }) => {
+      const tip = new MotivationalTip({ user: userId, content });
+      await tip.save();
+      return tip;
     },
   },
 
-  // Relations resolvers for nested data
-  Nurse: {
-    assignedPatients: async (nurse) => {
-      return await Patient.find({ nurse: nurse._id });
+  User: {
+    assignedPatients: async (user) => {
+      return user.role === "nurse" ? User.find({ assignedNurse: user._id }) : null;
     },
-  },
-  Patient: {
-    nurse: async (patient) => {
-      return await Nurse.findById(patient.nurse);
+    assignedNurse: async (user) => {
+      return user.role === "patient" ? User.findById(user.assignedNurse) : null;
+    },
+    vitalSigns: async (user) => {
+      return await VitalSign.find({ user: user._id });
+    },
+    motivationalTips: async (user) => {
+      return await MotivationalTip.find({ user: user._id });
     },
   },
 };
