@@ -25,7 +25,7 @@ const VitalSignsSchema = new Schema({
   },
   date: {
     type: Date,
-    default: Date.now,
+    default: Date.now, // retrieve this on the front end using
   },
 });
 

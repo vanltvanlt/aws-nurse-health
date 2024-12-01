@@ -2,6 +2,7 @@ const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const jwt = require("jsonwebtoken"); // Import JWT for token decoding
 const db = require("./config/db");
 const typeDefs = require("./schemas/user.schema");
 const resolvers = require("./resolvers/user.resolver");
@@ -12,7 +13,6 @@ const app = express();
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   console.log("REQUEST Body:", req.body);
-
   console.log("RESPONSE Body: ", res.body);
   next();
 });
@@ -31,12 +31,34 @@ app.use(
 );
 app.use(cookieParser());
 
+// JWT Secret Key
+const SECRET_KEY = "your_secret_key";
+
+// Apollo Server with Context
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req, res }) => ({ req, res }),
+  context: ({ req, res }) => {
+    let user = null;
+
+    // Extract token from cookies
+    const token = req.cookies["token"];
+    if (token) {
+      try {
+        // Decode the token
+        user = jwt.verify(token, SECRET_KEY);
+        console.log("Decoded User:", user);
+      } catch (error) {
+        console.error("Token verification failed:", error.message);
+      }
+    }
+
+    // Return the context
+    return { req, res, user };
+  },
 });
 
+// Start the Server
 server.start().then(() => {
   server.applyMiddleware({ app, cors: false });
 

@@ -7,8 +7,8 @@ const typeDefs = gql`
     name: String!
     email: String!
     role: String! # 'nurse' or 'patient'
-    assignedPatients: [User] # Only for nurses
-    assignedNurse: User      # Only for patients
+    assignedPatients: [User]
+    assignedNurse: User
     vitalSigns: [VitalSign]
     motivationalTips: [MotivationalTip]
   }
@@ -26,12 +26,14 @@ const typeDefs = gql`
     id: ID!
     content: String!
     createdAt: String!
+    user: User
   }
 
   type Query {
     currentUser: User
     getUser(id: ID!): User
     listUsers(role: String): [User] # Filter by role
+    listMotivationalTips: [MotivationalTip]
   }
 
   type Mutation {
@@ -39,7 +41,9 @@ const typeDefs = gql`
     register(name: String!, email: String!, password: String!, role: String!): User
     assignPatientToNurse(patientId: ID!, nurseId: ID!): User
     addVitalSign(userId: ID!, bodyTemperature: Float!, heartRate: Int!, bloodPressure: String!, respiratoryRate: Int!): VitalSign
-    addMotivationalTip(userId: ID!, content: String!): MotivationalTip
+    addMotivationalTip(content: String!): MotivationalTip
+    updateMotivationalTip(id: ID!, content: String!): MotivationalTip
+    deleteMotivationalTip(id: ID!): MotivationalTip
     updateUser(
     id: ID!,
     name: String,

@@ -38,12 +38,10 @@ const UserSchema = new Schema({
       ref: "User",
     },
   ],
-  assignedNurses: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],  
+  assignedNurse: { 
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 module.exports = mongoose.model('User', UserSchema);

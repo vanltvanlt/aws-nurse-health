@@ -1,27 +1,188 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { gql, useQuery, useMutation } from '@apollo/client';
+import { Table, Button, Form, Modal, Spinner, Alert } from 'react-bootstrap';
+
+// GraphQL Queries and Mutations
+const GET_TIPS_QUERY = gql`
+  query GetMotivationalTips {
+    listMotivationalTips {
+      id
+      content
+      createdAt
+      user {
+        name
+      }
+    }
+  }
+`;
+
+
+const ADD_TIP_MUTATION = gql`
+  mutation AddMotivationalTip($content: String!) {
+    addMotivationalTip(content: $content) {
+      id
+      content
+      createdAt
+    }
+  }
+`;
+
+const UPDATE_TIP_MUTATION = gql`
+  mutation UpdateMotivationalTip($id: ID!, $content: String!) {
+    updateMotivationalTip(id: $id, content: $content) {
+      id
+      content
+      createdAt
+    }
+  }
+`;
+
+const DELETE_TIP_MUTATION = gql`
+  mutation DeleteMotivationalTip($id: ID!) {
+    deleteMotivationalTip(id: $id) {
+      id
+    }
+  }
+`;
 
 function MotivationalTips() {
-    const [tip, setTip] = useState("");
+  const [newTip, setNewTip] = useState("");
+  const [editingTip, setEditingTip] = useState(null);
+  const [updatedContent, setUpdatedContent] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-    const handleChange = (event) => {
-        setTip(event.target.value);
+  // Fetch motivational tips
+  const { loading, error, data, refetch } = useQuery(GET_TIPS_QUERY);
+
+  // Mutations
+  const [addTip] = useMutation(ADD_TIP_MUTATION);
+  const [updateTip] = useMutation(UPDATE_TIP_MUTATION);
+  const [deleteTip] = useMutation(DELETE_TIP_MUTATION);
+
+  // Add a new motivational tip
+  const handleAddTip = async (event) => {
+    event.preventDefault();
+    try {
+      await addTip({ variables: { content: newTip } });
+      setNewTip("");
+      refetch(); // Refresh the list
+      alert("Motivational tip added successfully!");
+    } catch (err) {
+      alert("Error adding tip: " + err.message);
     }
+  };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // send tip to patients
+  // Update a motivational tip
+  const handleUpdateTip = async () => {
+    try {
+      await updateTip({ variables: { id: editingTip.id, content: updatedContent } });
+      setEditingTip(null);
+      setShowModal(false);
+      refetch();
+      alert("Motivational tip updated successfully!");
+    } catch (err) {
+      alert("Error updating tip: " + err.message);
     }
+  };
 
-    return (
-        <Form onSubmit={handleSubmit}>
-            <Form.Group>
-                <Form.Label>Enter Motivational Tip</Form.Label>
-                <Form.Control as="textarea" rows={3} value={tip} onChange={handleChange} />
-            </Form.Group>
-            <Button type="submit">Send Tip</Button>
-        </Form>
-    );
+  // Delete a motivational tip
+  const handleDeleteTip = async (id) => {
+    if (window.confirm("Are you sure you want to delete this tip?")) {
+      try {
+        await deleteTip({ variables: { id } });
+        refetch();
+        alert("Motivational tip deleted successfully!");
+      } catch (err) {
+        alert("Error deleting tip: " + err.message);
+      }
+    }
+  };
+
+  if (loading) return <Spinner animation="border" />;
+  if (error) return <Alert variant="danger">Error loading tips: {error.message}</Alert>;
+
+  return (
+    <div>
+      <h1>Motivational Tips</h1>
+
+      {/* Add New Tip */}
+      <Form onSubmit={handleAddTip}>
+        <Form.Group>
+          <Form.Label>Enter New Motivational Tip</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={newTip}
+            onChange={(e) => setNewTip(e.target.value)}
+          />
+        </Form.Group>
+        <Button type="submit">Add Tip</Button>
+      </Form>
+
+      {/* Motivational Tips Table */}
+      <Table striped bordered hover className="mt-4">
+        <thead>
+          <tr>
+            <th>Creator</th>
+            <th>Content</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.listMotivationalTips.map((tip) => (
+            <tr key={tip.id}>
+              <td>{tip.user.name}</td>
+              <td>{tip.content}</td>
+              <td>{new Date(parseInt(tip.createdAt)).toLocaleString()}</td>
+              <td>
+                <Button
+                  variant="warning"
+                  size="sm"
+                  onClick={() => {
+                    setEditingTip(tip);
+                    setUpdatedContent(tip.content);
+                    setShowModal(true);
+                  }}
+                >
+                  Edit
+                </Button>{' '}
+                <Button variant="danger" size="sm" onClick={() => handleDeleteTip(tip.id)}>
+                  Delete
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
+      {/* Edit Tip Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Tip</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group>
+            <Form.Label>Edit Content</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={updatedContent}
+              onChange={(e) => setUpdatedContent(e.target.value)}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleUpdateTip}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
 }
 
 export default MotivationalTips;

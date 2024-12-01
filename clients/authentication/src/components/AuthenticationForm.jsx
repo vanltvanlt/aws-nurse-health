@@ -14,21 +14,28 @@ import { gql, useMutation } from "@apollo/client";
 
 // GraphQL Mutations
 const LOGIN_MUTATION = gql`
-  mutation Login($username: String!, $password: String!) {
-    login(username: $username, password: $password)
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password)
   }
 `;
 
 const REGISTER_MUTATION = gql`
-  mutation Register($username: String!, $password: String!) {
-    register(username: $username, password: $password)
+  mutation Register($name: String!, $email: String!, $password: String!, $role: String!) {
+    register(name: $name, email: $email, password: $password, role: $role) {
+      id
+      name
+      email
+      role
+    }
   }
 `;
 
 function AuthenticationForm() {
   // STATES
-  const [username, setUsername] = useState("");
+  const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("nurse");
 
   const [activeTab, setActiveTab] = useState("login");
   const [authError, setAuthError] = useState("");
@@ -36,11 +43,18 @@ function AuthenticationForm() {
 
   // LOGIN MUTATION
   const [login] = useMutation(LOGIN_MUTATION, {
-    onCompleted: () => {
+    onCompleted: (data) => {
+      const token = data.login.token; // Extract token from response
+      localStorage.setItem("authToken", token); // Store token in local storage
+      console.log("Token: ", token);
       // Dispatch custom event upon successful login
       window.dispatchEvent(
-        new CustomEvent("loginSuccess", { detail: { isLoggedIn: true } })
+        new CustomEvent("auth-Success", { detail: { token } }),
+        // Redirect to dashboard
+        window.location.assign("http://localhost:3002/")
+
       );
+      alert("Login successful!");
     },
     onError: (error) => setAuthError(error.message || "Login failed"),
   });
@@ -60,16 +74,16 @@ function AuthenticationForm() {
     setIsSubmitting(true);
     setAuthError("");
 
-    if (!username || !password) {
-      setAuthError("Username and password are required.");
+    if (!email || !password) {
+      setAuthError("email and password are required.");
       setIsSubmitting(false);
       return;
     }
 
     if (activeTab === "login") {
-      await login({ variables: { username, password } });
+      await login({ variables: { email, password } });
     } else {
-      await register({ variables: { username, password } });
+      await register({ variables: { name, email, password, role } });
     }
     setIsSubmitting(false);
   };
@@ -114,14 +128,42 @@ function AuthenticationForm() {
                           </Nav>
                           {/* </Card.Header>
                             <Card.Body> */}
+
+                          {/* If event type is Sigup show name and role drop down to select nurse or patient */}
+                          {activeTab === "signup" && (
+                              <>
+                                <Form.Group className='mb-3'>
+                                  <Form.Label>Name</Form.Label>
+                                  <Form.Control
+                                    type='text'
+                                    placeholder='Enter your name'
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                  />
+                                </Form.Group>
+                                
+                                <Form.Group className='mb-3'>
+                                  <Form.Label>Role</Form.Label>
+                          
+                                  <Form.Select
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    >
+                                    <option value='nurse'>Nurse</option>
+                                    <option value='patient'>Patient</option>
+                                  </Form.Select>
+                                </Form.Group>
+                              </>
+                            )}
+                          
                           <Form onSubmit={handleSubmit}>
                             <Form.Group className='mb-3 mt-3'>
-                              <Form.Label>Username</Form.Label>
+                              <Form.Label>email</Form.Label>
                               <Form.Control
                                 type='text'
-                                placeholder='Enter your username'
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder='Enter your email'
+                                value={email}
+                                onChange={(e) => setemail(e.target.value)}
                               />
                             </Form.Group>
 

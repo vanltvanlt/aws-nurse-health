@@ -22,6 +22,9 @@ const resolvers = {
     },
     getUser: async (_, { id }) => {
       return await User.findById(id)
+        .populate("name")
+        .populate("email")
+        .populate("role")
         .populate("assignedPatients")
         .populate("assignedNurse")
         .populate("vitalSigns")
@@ -29,6 +32,13 @@ const resolvers = {
     },
     listUsers: async (_, { role }) => {
       return await User.find(role ? { role } : {}).populate("assignedPatients").populate("assignedNurse");
+    },
+    listMotivationalTips: async () => {
+      try {
+        return await MotivationalTip.find().populate("user").sort({ createdAt: -1 }); // Sort by most recent
+      } catch (error) {
+        throw new Error('Failed to fetch motivational tips: ' + error.message);
+      }
     },
   },
 
@@ -53,8 +63,9 @@ const resolvers = {
       res.cookie("token", token, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, // 1 day
-        sameSite: "None", // Ensure cookie works across the same site
-        secure: true, // Ensure cookie is only sent over HTTPS
+        // sameSite: "None", // Ensure cookie works across the same site
+        sameSite: "Lax", // Ensure cookie works across the same site
+        // secure: true, // Ensure cookie is only sent over HTTPS
       });
 
       console.log("Logged in user: ", user);
@@ -123,11 +134,40 @@ const resolvers = {
       await vitalSign.save();
       return vitalSign;
     },
-    addMotivationalTip: async (_, { userId, content }) => {
-      const tip = new MotivationalTip({ user: userId, content });
-      await tip.save();
-      return tip;
+    addMotivationalTip: async (_, { content }, {user}) => {
+      try {
+        const newTip = new MotivationalTip({ user: user.id, content });
+        return await newTip.save();
+      } catch (error) {
+        throw new Error('Failed to add motivational tip: ' + error.message);
+      }
     },
+    updateMotivationalTip: async (_, { id, content }) => {
+      try {
+        const updatedTip = await MotivationalTip.findByIdAndUpdate(
+          id,
+          { content },
+          { new: true }
+        );
+        if (!updatedTip) {
+          throw new Error('Motivational tip not found');
+        }
+        return updatedTip;
+      } catch (error) {
+        throw new Error('Failed to update motivational tip: ' + error.message);
+      }
+    },
+    deleteMotivationalTip: async (_, { id }) => {
+      try {
+        const deletedTip = await MotivationalTip.findByIdAndDelete(id);
+        if (!deletedTip) {
+          throw new Error('Motivational tip not found');
+        }
+        return deletedTip;
+      } catch (error) {
+        throw new Error('Failed to delete motivational tip: ' + error.message);
+      }
+    }
   },
 
   User: {
