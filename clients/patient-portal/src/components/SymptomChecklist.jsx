@@ -1,7 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import "../styles/SymptomChecklist.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function SymptomChecklist() {
+  const symptoms = [
+    "Fever",
+    "Cough",
+    "Sore Throat",
+    "Runny or Stuffy Nose",
+    "Muscle Aches",
+    "Headache",
+    "Fatigue",
+    "Mucus Production",
+    "Shortness of Breath",
+    "Chest Pain",
+    "Nausea",
+    "Vomiting",
+    "Lightheadedness",
+    "Sweating",
+    "Changes in Bowel or Bladder Habits",
+    "Numbness on One Side of the Body",
+    "Confusion",
+    "Difficulty Speaking",
+    "Trouble Seeing in One Eye",
+    "Severe Headache",
+    "Lump",
+    "Unexplained Weight Loss",
+    "Sudden Weakness",
+    "Persistent Cough",
+    "Unexplained Bleeding or Discharge",
+    "Cuts that are Slow to Heal",
+    "Indigestion",
+    "Increased Thirst",
+    "Frequent Urination",
+    "Blurred Vision",
+  ];
+
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
 
   const handleCheckboxChange = (event) => {
@@ -11,29 +46,25 @@ export default function SymptomChecklist() {
     );
   };
 
+  useEffect(() => {
+    console.log(selectedSymptoms);
+  }, [selectedSymptoms]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <div>
-        <Form.Check
-          label='Fever'
-          value='Fever'
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          label='Cough'
-          value='Cough'
-          onChange={handleCheckboxChange}
-        />
-        <Form.Check
-          label='Difficulty Breathing'
-          value='Difficulty Breathing'
-          onChange={handleCheckboxChange}
-        />
-        {/* // Add more symptoms as needed */}
+      <div className='form-options mb-4'>
+        {symptoms.map((symptom) => (
+          <Form.Check
+            key={symptom}
+            label={symptom}
+            value={symptom}
+            onChange={handleCheckboxChange}
+          />
+        ))}
       </div>
       <Button type='submit'>Submit Symptoms</Button>
     </Form>

@@ -11,27 +11,31 @@ function App() {
     <>
       <Navbar />
       <Container>
+        {/* ************ HEADER ************ */}
         <div className='dashboard-tile dashboard-header'>
-          <h2>Welcome to the Sinai Hospital 🏥 Patient Portal</h2>
+          <h2 className='dashboad-title'>
+            Welcome to the Sinai Hospital 🏥 Patient Portal
+          </h2>
           <p>Daily Tip: </p>
         </div>
 
+        {/* ************ DASHBOARD TILES ************ */}
         <div className='dashboard-container'>
           <div className='dashboard-left'>
             <div className='dashboard-tile dashboard-vitals'>
-              <h2>Enter you Vitals</h2>
+              <h2 className='dashboad-title'>Enter you Vitals</h2>
               <DailyInfoForm />
             </div>
           </div>
 
           <div className='dashboard-right'>
             <div className='dashboard-tile dashboard-emergency-alert'>
-              <h2>Emergency Alert</h2>
+              <h2 className='dashboad-title'>Emergency Alert</h2>
               <EmergencyAlert />
             </div>
 
             <div className='dashboard-tile dashboard-symptoms-checklist'>
-              <h2>Checklist for Symptoms</h2>
+              <h2 className='dashboad-title'>Checklist for Symptoms</h2>
               <SymptomChecklist />
             </div>
           </div>

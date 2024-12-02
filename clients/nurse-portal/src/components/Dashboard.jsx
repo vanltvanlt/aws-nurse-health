@@ -45,7 +45,7 @@ export default function Dashboard() {
             ></div>
             <div className='dashboard-tips-popup'>
               <div onClick={() => setShowTips(!showTips)}>Close</div>
-              <h2>Motivational Tips</h2>
+              <h2 className='dashboad-title'>Motivational Tips</h2>
               <MotivationalTips />
             </div>
           </div>
@@ -53,15 +53,16 @@ export default function Dashboard() {
 
         {/* ************ HEADER ************ */}
         <div className='dashboard-tile dashboard-header'>
-          <h2>Welcome to the Sinai Hospital 🏥 Nurse Portal</h2>
-          <a href='#' onClick={() => setShowTips(!showTips)}>
-            {" "}
+          <h2 className='dashboad-title'>
+            Welcome to the Sinai Hospital 🏥 Nurse Portal
+          </h2>
+          <a className='link' href='#' onClick={() => setShowTips(!showTips)}>
             Motivational Tips
           </a>
         </div>
 
         {/* ************ PATIENT SEARCH ************ */}
-        <div className='dashboard-tile dashboard-header'>
+        <div className='dashboard-header'>
           {/* Patient Selector */}
           {patientsLoading ? (
             <Spinner animation='border' />
@@ -71,7 +72,6 @@ export default function Dashboard() {
             </Alert>
           ) : (
             <Form.Group>
-              <Form.Label>Select Patient</Form.Label>
               <Form.Control
                 as='select'
                 value={selectedPatient}
@@ -93,18 +93,19 @@ export default function Dashboard() {
           <div className='dashboard-container'>
             <div className='dashboard-left'>
               <div className='dashboard-tile dashboard-vitals'>
-                <h2>Clinical Records</h2>
+                <h2 className='dashboad-title'>Clinical Records</h2>
                 <ClinicalVisits />
               </div>
             </div>
 
             <div className='dashboard-right'>
               <div className='dashboard-tile dashboard-vitals'>
-                <h2>Add Vitals</h2>
+                <h2 className='dashboad-title'>Add Vitals</h2>
                 <VitalsForm />
               </div>
+
               <div className='dashboard-tile dashboard-emergency-alert'>
-                <h2>Assign to Doctor</h2>
+                <h2 className='dashboad-title'>Assign to Doctor</h2>
                 <AssignPatients />
               </div>
             </div>

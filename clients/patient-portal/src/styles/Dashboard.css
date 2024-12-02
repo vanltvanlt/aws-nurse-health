@@ -1,6 +1,6 @@
 .dashboard-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 2fr;
   gap: 2rem;
   width: 100%;
 }
@@ -34,4 +34,16 @@
   flex-direction: column;
   gap: 2rem;
   width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboad-title {
+  padding: 5px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }

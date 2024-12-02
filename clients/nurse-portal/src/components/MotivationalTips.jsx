@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { gql, useQuery, useMutation } from '@apollo/client';
-import { Table, Button, Form, Modal, Spinner, Alert } from 'react-bootstrap';
+import { useState } from "react";
+import { gql, useQuery, useMutation } from "@apollo/client";
+import { Table, Button, Form, Modal, Spinner, Alert } from "react-bootstrap";
 
 // GraphQL Queries and Mutations
 const GET_TIPS_QUERY = gql`
@@ -15,7 +15,6 @@ const GET_TIPS_QUERY = gql`
     }
   }
 `;
-
 
 const ADD_TIP_MUTATION = gql`
   mutation AddMotivationalTip($content: String!) {
@@ -75,7 +74,9 @@ function MotivationalTips() {
   // Update a motivational tip
   const handleUpdateTip = async () => {
     try {
-      await updateTip({ variables: { id: editingTip.id, content: updatedContent } });
+      await updateTip({
+        variables: { id: editingTip.id, content: updatedContent },
+      });
       setEditingTip(null);
       setShowModal(false);
       refetch();
@@ -98,29 +99,28 @@ function MotivationalTips() {
     }
   };
 
-  if (loading) return <Spinner animation="border" />;
-  if (error) return <Alert variant="danger">Error loading tips: {error.message}</Alert>;
+  if (loading) return <Spinner animation='border' />;
+  if (error)
+    return <Alert variant='danger'>Error loading tips: {error.message}</Alert>;
 
   return (
     <div>
-      <h1>Motivational Tips</h1>
-
       {/* Add New Tip */}
       <Form onSubmit={handleAddTip}>
         <Form.Group>
           <Form.Label>Enter New Motivational Tip</Form.Label>
           <Form.Control
-            as="textarea"
+            as='textarea'
             rows={3}
             value={newTip}
             onChange={(e) => setNewTip(e.target.value)}
           />
         </Form.Group>
-        <Button type="submit">Add Tip</Button>
+        <Button type='submit'>Add Tip</Button>
       </Form>
 
       {/* Motivational Tips Table */}
-      <Table striped bordered hover className="mt-4">
+      <Table striped bordered hover className='mt-4'>
         <thead>
           <tr>
             <th>Creator</th>
@@ -137,8 +137,8 @@ function MotivationalTips() {
               <td>{new Date(parseInt(tip.createdAt)).toLocaleString()}</td>
               <td>
                 <Button
-                  variant="warning"
-                  size="sm"
+                  variant='warning'
+                  size='sm'
                   onClick={() => {
                     setEditingTip(tip);
                     setUpdatedContent(tip.content);
@@ -146,8 +146,12 @@ function MotivationalTips() {
                   }}
                 >
                   Edit
-                </Button>{' '}
-                <Button variant="danger" size="sm" onClick={() => handleDeleteTip(tip.id)}>
+                </Button>{" "}
+                <Button
+                  variant='danger'
+                  size='sm'
+                  onClick={() => handleDeleteTip(tip.id)}
+                >
                   Delete
                 </Button>
               </td>
@@ -165,7 +169,7 @@ function MotivationalTips() {
           <Form.Group>
             <Form.Label>Edit Content</Form.Label>
             <Form.Control
-              as="textarea"
+              as='textarea'
               rows={3}
               value={updatedContent}
               onChange={(e) => setUpdatedContent(e.target.value)}
@@ -173,10 +177,10 @@ function MotivationalTips() {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant='secondary' onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleUpdateTip}>
+          <Button variant='primary' onClick={handleUpdateTip}>
             Save Changes
           </Button>
         </Modal.Footer>

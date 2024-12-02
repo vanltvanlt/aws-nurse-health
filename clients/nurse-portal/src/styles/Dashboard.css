@@ -60,3 +60,28 @@
   transform: translate(-50%, -50%);
   z-index: 2;
 }
+
+.link {
+  text-decoration: none;
+  color: black;
+  display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: #2c2e43;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboad-title {
+  padding: 5px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
