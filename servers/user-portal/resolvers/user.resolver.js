@@ -71,7 +71,7 @@ const resolvers = {
       console.log("Logged in user: ", user);
       console.log("Token: ", token);
   
-      return true; // Indicating successful login
+      return user; // Indicating successful login
     },
     register: async (_, { name, email, password, role }) => {
       const hashedPassword = await bcrypt.hash(password, 10);

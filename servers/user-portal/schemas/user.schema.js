@@ -37,21 +37,32 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    login(email: String!, password: String!): Boolean
-    register(name: String!, email: String!, password: String!, role: String!): User
+    login(email: String!, password: String!): User
+    register(
+      name: String!
+      email: String!
+      password: String!
+      role: String!
+    ): User
     assignPatientToNurse(patientId: ID!, nurseId: ID!): User
-    addVitalSign(userId: ID!, bodyTemperature: Float!, heartRate: Int!, bloodPressure: String!, respiratoryRate: Int!): VitalSign
+    addVitalSign(
+      userId: ID!
+      bodyTemperature: Float!
+      heartRate: Int!
+      bloodPressure: String!
+      respiratoryRate: Int!
+    ): VitalSign
     addMotivationalTip(content: String!): MotivationalTip
     updateMotivationalTip(id: ID!, content: String!): MotivationalTip
     deleteMotivationalTip(id: ID!): MotivationalTip
     updateUser(
-    id: ID!,
-    name: String,
-    email: String,
-    password: String,
-    role: String,
-    assignedNurse: ID,
-    assignedPatients: [ID!]
+      id: ID!
+      name: String
+      email: String
+      password: String
+      role: String
+      assignedNurse: ID
+      assignedPatients: [ID!]
     ): User
   }
 `;

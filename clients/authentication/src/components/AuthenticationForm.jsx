@@ -15,12 +15,20 @@ import { gql, useMutation } from "@apollo/client";
 // GraphQL Mutations
 const LOGIN_MUTATION = gql`
   mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password)
+    login(email: $email, password: $password) {
+      id
+      role
+    }
   }
 `;
 
 const REGISTER_MUTATION = gql`
-  mutation Register($name: String!, $email: String!, $password: String!, $role: String!) {
+  mutation Register(
+    $name: String!
+    $email: String!
+    $password: String!
+    $role: String!
+  ) {
     register(name: $name, email: $email, password: $password, role: $role) {
       id
       name
@@ -47,23 +55,33 @@ function AuthenticationForm() {
       const token = data.login.token; // Extract token from response
       localStorage.setItem("authToken", token); // Store token in local storage
       console.log("Token: ", token);
-      // Dispatch custom event upon successful login
-      window.dispatchEvent(
-        new CustomEvent("auth-Success", { detail: { token } }),
-        // Redirect to dashboard
-        window.location.assign("http://localhost:3002/")
+      console.log("data: ", data);
 
-      );
-      alert("Login successful!");
+      // Dispatch custom event upon successful login
+      if (data.login.role === "nurse") {
+        window.dispatchEvent(
+          new CustomEvent("auth-Success", { detail: { token } }),
+
+          // Redirect to dashboard
+          window.location.assign("http://localhost:3002/")
+        );
+      } else {
+        window.dispatchEvent(
+          new CustomEvent("auth-Success", { detail: { token } }),
+
+          // Redirect to dashboard
+          window.location.assign("http://localhost:5173/")
+        );
+      }
     },
+
     onError: (error) => setAuthError(error.message || "Login failed"),
   });
 
   // REGISTER MUTATION
   const [register] = useMutation(REGISTER_MUTATION, {
     onCompleted: () => {
-      alert("Registration successful! Please log in.");
-      setActiveTab("login"); // Switch to login view
+      login({ variables: { email, password } });
     },
     onError: (error) => setAuthError(error.message || "Registration failed"),
   });
@@ -85,6 +103,7 @@ function AuthenticationForm() {
     } else {
       await register({ variables: { name, email, password, role } });
     }
+
     setIsSubmitting(false);
   };
 
@@ -105,6 +124,7 @@ function AuthenticationForm() {
                       className='img-fluid image-auth'
                     />
                   </div>
+
                   {/* FORM */}
                   <div className='col-md-6 col-lg-6 d-flex align-items-top'>
                     <div className='card-body p-2 p-lg-5 text-black'></div>
@@ -131,31 +151,31 @@ function AuthenticationForm() {
 
                           {/* If event type is Sigup show name and role drop down to select nurse or patient */}
                           {activeTab === "signup" && (
-                              <>
-                                <Form.Group className='mb-3'>
-                                  <Form.Label>Name</Form.Label>
-                                  <Form.Control
-                                    type='text'
-                                    placeholder='Enter your name'
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                  />
-                                </Form.Group>
-                                
-                                <Form.Group className='mb-3'>
-                                  <Form.Label>Role</Form.Label>
-                          
-                                  <Form.Select
-                                    value={role}
-                                    onChange={(e) => setRole(e.target.value)}
-                                    >
-                                    <option value='nurse'>Nurse</option>
-                                    <option value='patient'>Patient</option>
-                                  </Form.Select>
-                                </Form.Group>
-                              </>
-                            )}
-                          
+                            <>
+                              <Form.Group className='mb-3'>
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                  type='text'
+                                  placeholder='Enter your name'
+                                  value={name}
+                                  onChange={(e) => setName(e.target.value)}
+                                />
+                              </Form.Group>
+
+                              <Form.Group className='mb-3'>
+                                <Form.Label>Role</Form.Label>
+
+                                <Form.Select
+                                  value={role}
+                                  onChange={(e) => setRole(e.target.value)}
+                                >
+                                  <option value='nurse'>Nurse</option>
+                                  <option value='patient'>Patient</option>
+                                </Form.Select>
+                              </Form.Group>
+                            </>
+                          )}
+
                           <Form onSubmit={handleSubmit}>
                             <Form.Group className='mb-3 mt-3'>
                               <Form.Label>email</Form.Label>

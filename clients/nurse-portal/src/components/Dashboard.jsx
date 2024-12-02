@@ -47,7 +47,12 @@ export default function Dashboard() {
               onClick={() => setShowTips(!showTips)}
             ></div>
             <div className='dashboard-tips-popup'>
-              <div className='close-button' onClick={() => setShowTips(!showTips)}>Close</div>
+              <div
+                className='close-button'
+                onClick={() => setShowTips(!showTips)}
+              >
+                Close
+              </div>
               <h2 className='dashboad-title'>Motivational Tips</h2>
               <MotivationalTips />
             </div>
@@ -77,7 +82,7 @@ export default function Dashboard() {
             <Form.Group>
               <Form.Control
                 as='select'
-                value={selectedPatient}
+                value={selectedPatient?.id}
                 onChange={handlePatientChange}
               >
                 <option value=''>Select a patient</option>
