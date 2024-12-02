@@ -10,7 +10,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <Container>
+      <Container className='mb-5'>
         {/* ************ HEADER ************ */}
         <div className='dashboard-tile dashboard-header'>
           <h2 className='dashboad-title'>
@@ -41,6 +41,7 @@ function App() {
           </div>
         </div>
       </Container>
+      <footer>Final Group Assignment &copy; 2024</footer>
     </>
   );
 }

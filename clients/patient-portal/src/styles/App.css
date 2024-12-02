@@ -8,3 +8,12 @@ html {
   margin: 0 auto;
   width: 100vw;
 }
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
