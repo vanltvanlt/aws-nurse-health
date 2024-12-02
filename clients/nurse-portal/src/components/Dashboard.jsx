@@ -109,14 +109,14 @@ export default function Dashboard() {
             <div className='dashboard-right'>
               <div className='dashboard-tile dashboard-vitals'>
                 <h2 className='dashboad-title'>Add Vitals</h2>
-                <VitalsForm />
+                <VitalsForm selectedPatient={selectedPatient} />
               </div>
 
               <div className='dashboard-tile dashboard-emergency-alert'>
                 <h2 className='dashboad-title'>
                   Latest Symptom Checklist Details
                 </h2>
-                <AssignPatients />
+                <AssignPatients selectedPatient={selectedPatient} />
               </div>
             </div>
           </div>

@@ -126,34 +126,31 @@ function MotivationalTips() {
             <th>Creator</th>
             <th>Content</th>
             <th>Created At</th>
-            <th>Actions</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {data.listMotivationalTips.map((tip) => (
             <tr key={tip.id}>
-              <td>{tip.user.name}</td>
+              <td>{tip.user?.name}</td>
               <td>{tip.content}</td>
               <td>{new Date(parseInt(tip.createdAt)).toLocaleString()}</td>
               <td>
-                <Button
-                  variant='warning'
-                  size='sm'
+                <div
                   onClick={() => {
                     setEditingTip(tip);
                     setUpdatedContent(tip.content);
                     setShowModal(true);
                   }}
                 >
-                  Edit
-                </Button>{" "}
-                <Button
-                  variant='danger'
-                  size='sm'
-                  onClick={() => handleDeleteTip(tip.id)}
-                >
-                  Delete
-                </Button>
+                  {/* Edit Icon */}
+                  <img src='./edit.png' alt='Edit' className='icon' />
+                </div>
+
+                <div onClick={() => handleDeleteTip(tip.id)}>
+                  {/* Edit Icon */}
+                  <img src='./trash.png' alt='Edit' className='icon' />
+                </div>
               </td>
             </tr>
           ))}

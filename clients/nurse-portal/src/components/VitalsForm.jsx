@@ -115,7 +115,7 @@ function VitalsForm({ selectedPatient }) {
           onChange={handleChange}
         />
       </Form.Group>
-      <Form.Group>
+      <Form.Group className='mt-3'>
         <Form.Label>Heart Rate</Form.Label>
         <Form.Control
           type='number'
@@ -125,7 +125,7 @@ function VitalsForm({ selectedPatient }) {
         />
       </Form.Group>
       <Form.Group>
-        <Form.Label>Blood Pressure</Form.Label>
+        <Form.Label className='mt-3'>Blood Pressure</Form.Label>
         <Form.Control
           type='text'
           name='bloodPressure'
@@ -134,7 +134,7 @@ function VitalsForm({ selectedPatient }) {
         />
       </Form.Group>
       <Form.Group className='mb-4'>
-        <Form.Label>Respiratory Rate</Form.Label>
+        <Form.Label className='mt-3'>Respiratory Rate</Form.Label>
         <Form.Control
           type='number'
           name='respiratoryRate'
