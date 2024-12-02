@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { Form, Table, Spinner, Alert } from 'react-bootstrap';
+import { useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { Form, Table, Spinner, Alert } from "react-bootstrap";
 
 // GraphQL Queries
 const GET_PATIENTS_QUERY = gql`
@@ -28,10 +28,14 @@ const GET_PATIENT_VITAL_SIGNS_QUERY = gql`
 `;
 
 function ClinicalVisits() {
-  const [selectedPatient, setSelectedPatient] = useState('');
+  const [selectedPatient, setSelectedPatient] = useState("");
 
   // Fetch list of patients
-  const { loading: patientsLoading, error: patientsError, data: patientsData } = useQuery(GET_PATIENTS_QUERY);
+  const {
+    loading: patientsLoading,
+    error: patientsError,
+    data: patientsData,
+  } = useQuery(GET_PATIENTS_QUERY);
 
   // Fetch vital signs for selected patient
   const {
@@ -50,18 +54,22 @@ function ClinicalVisits() {
 
   return (
     <div>
-      <h1>Clinical Visit Records</h1>
-
       {/* Patient Selector */}
       {patientsLoading ? (
-        <Spinner animation="border" />
+        <Spinner animation='border' />
       ) : patientsError ? (
-        <Alert variant="danger">Error loading patients: {patientsError.message}</Alert>
+        <Alert variant='danger'>
+          Error loading patients: {patientsError.message}
+        </Alert>
       ) : (
         <Form.Group>
           <Form.Label>Select Patient</Form.Label>
-          <Form.Control as="select" value={selectedPatient} onChange={handlePatientChange}>
-            <option value="">Select a patient</option>
+          <Form.Control
+            as='select'
+            value={selectedPatient}
+            onChange={handlePatientChange}
+          >
+            <option value=''>Select a patient</option>
             {patientsData.listUsers.map((patient) => (
               <option key={patient.id} value={patient.id}>
                 {patient.name}
@@ -73,10 +81,14 @@ function ClinicalVisits() {
 
       {/* Vital Signs Table */}
       {vitalsLoading ? (
-        <Spinner animation="border" />
+        <Spinner animation='border' />
       ) : vitalsError ? (
-        <Alert variant="danger">Error loading vital signs: {vitalsError.message}</Alert>
-      ) : selectedPatient && vitalsData && vitalsData.getUser.vitalSigns.length > 0 ? (
+        <Alert variant='danger'>
+          Error loading vital signs: {vitalsError.message}
+        </Alert>
+      ) : selectedPatient &&
+        vitalsData &&
+        vitalsData.getUser.vitalSigns.length > 0 ? (
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -100,7 +112,9 @@ function ClinicalVisits() {
           </tbody>
         </Table>
       ) : (
-        selectedPatient && <p>No clinical visits found for the selected patient.</p>
+        selectedPatient && (
+          <p>No clinical visits found for the selected patient.</p>
+        )
       )}
     </div>
   );

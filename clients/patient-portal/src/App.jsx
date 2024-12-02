@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import DailyInfoForm from "./components/DailyInfoForm";
+import EmergencyAlert from "./components/EmergencyAlert";
+import Navbar from "./components/navbar";
+import SymptomChecklist from "./components/SymptomChecklist";
+import { Container } from "react-bootstrap";
+import "./styles/App.css";
+import "./styles/Dashboard.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Navbar />
+      <Container>
+        <div className='dashboard-tile dashboard-header'>
+          <h2>Welcome to the Sinai Hospital 🏥 Patient Portal</h2>
+          <p>Daily Tip: </p>
+        </div>
+
+        <div className='dashboard-container'>
+          <div className='dashboard-left'>
+            <div className='dashboard-tile dashboard-vitals'>
+              <h2>Enter you Vitals</h2>
+              <DailyInfoForm />
+            </div>
+          </div>
+
+          <div className='dashboard-right'>
+            <div className='dashboard-tile dashboard-emergency-alert'>
+              <h2>Emergency Alert</h2>
+              <EmergencyAlert />
+            </div>
+
+            <div className='dashboard-tile dashboard-symptoms-checklist'>
+              <h2>Checklist for Symptoms</h2>
+              <SymptomChecklist />
+            </div>
+          </div>
+        </div>
+      </Container>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

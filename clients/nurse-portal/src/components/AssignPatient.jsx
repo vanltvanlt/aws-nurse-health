@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { Spinner, Alert, Form, Button } from "react-bootstrap";
 
@@ -30,8 +31,8 @@ const AssignPatients = ({ nurseId }) => {
   const [assignPatient] = useMutation(ASSIGN_PATIENT_MUTATION);
   const [selectedPatient, setSelectedPatient] = useState("");
 
-  if (loading) return <Spinner animation="border" />;
-  if (error) return <Alert variant="danger">{error.message}</Alert>;
+  if (loading) return <Spinner animation='border' />;
+  if (error) return <Alert variant='danger'>{error.message}</Alert>;
 
   const unassignedPatients = data.listUsers.filter(
     (patient) => !patient.assignedNurse
@@ -50,14 +51,13 @@ const AssignPatients = ({ nurseId }) => {
 
   return (
     <div>
-      <h3>Assign a Patient</h3>
       <Form.Group>
         <Form.Label>Select Patient</Form.Label>
         <Form.Select
           value={selectedPatient}
           onChange={(e) => setSelectedPatient(e.target.value)}
         >
-          <option value="">Select a patient</option>
+          <option value=''>Select a patient</option>
           {unassignedPatients.map((patient) => (
             <option key={patient.id} value={patient.id}>
               {patient.name}
@@ -70,6 +70,9 @@ const AssignPatients = ({ nurseId }) => {
       </Button>
     </div>
   );
+};
+AssignPatients.propTypes = {
+  nurseId: PropTypes.string.isRequired,
 };
 
 export default AssignPatients;
