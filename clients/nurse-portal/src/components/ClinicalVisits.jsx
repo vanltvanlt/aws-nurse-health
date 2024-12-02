@@ -1,16 +1,16 @@
-import { useState } from "react";
+import PropTypes from "prop-types";
 import { gql, useQuery } from "@apollo/client";
-import { Form, Table, Spinner, Alert } from "react-bootstrap";
+import { Table, Spinner, Alert } from "react-bootstrap";
 
-// GraphQL Queries
-const GET_PATIENTS_QUERY = gql`
-  query GetPatients {
-    listUsers(role: "patient") {
-      id
-      name
-    }
-  }
-`;
+// // GraphQL Queries
+// const GET_PATIENTS_QUERY = gql`
+//   query GetPatients {
+//     listUsers(role: "patient") {
+//       id
+//       name
+//     }
+//   }
+// `;
 
 const GET_PATIENT_VITAL_SIGNS_QUERY = gql`
   query GetPatientVitalSigns($userId: ID!) {
@@ -27,15 +27,15 @@ const GET_PATIENT_VITAL_SIGNS_QUERY = gql`
   }
 `;
 
-function ClinicalVisits() {
-  const [selectedPatient, setSelectedPatient] = useState("");
+function ClinicalVisits({ selectedPatient }) {
+  // const [selectedPatient, setSelectedPatient] = useState("");
 
-  // Fetch list of patients
-  const {
-    loading: patientsLoading,
-    error: patientsError,
-    data: patientsData,
-  } = useQuery(GET_PATIENTS_QUERY);
+  // // Fetch list of patients
+  // const {
+  //   loading: patientsLoading,
+  //   error: patientsError,
+  //   data: patientsData,
+  // } = useQuery(GET_PATIENTS_QUERY);
 
   // Fetch vital signs for selected patient
   const {
@@ -43,19 +43,19 @@ function ClinicalVisits() {
     error: vitalsError,
     data: vitalsData,
   } = useQuery(GET_PATIENT_VITAL_SIGNS_QUERY, {
-    variables: { userId: selectedPatient },
+    variables: { userId: selectedPatient.id },
     skip: !selectedPatient, // Skip query if no patient is selected
   });
 
-  // Handle patient selection
-  const handlePatientChange = (e) => {
-    setSelectedPatient(e.target.value);
-  };
+  // // Handle patient selection
+  // const handlePatientChange = (e) => {
+  //   setSelectedPatient(e.target.value);
+  // };
 
   return (
     <div>
       {/* Patient Selector */}
-      {patientsLoading ? (
+      {/* {patientsLoading ? (
         <Spinner animation='border' />
       ) : patientsError ? (
         <Alert variant='danger'>
@@ -77,7 +77,7 @@ function ClinicalVisits() {
             ))}
           </Form.Control>
         </Form.Group>
-      )}
+      )} */}
 
       {/* Vital Signs Table */}
       {vitalsLoading ? (
@@ -113,11 +113,14 @@ function ClinicalVisits() {
         </Table>
       ) : (
         selectedPatient && (
-          <p>No clinical visits found for the selected patient.</p>
+          <p>No clinical visits found for {selectedPatient.name}.</p>
         )
       )}
     </div>
   );
 }
+ClinicalVisits.propTypes = {
+  selectedPatient: PropTypes.object.isRequired,
+};
 
 export default ClinicalVisits;

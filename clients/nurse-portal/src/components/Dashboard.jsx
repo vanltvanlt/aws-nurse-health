@@ -19,7 +19,7 @@ const GET_PATIENTS_QUERY = gql`
 
 export default function Dashboard() {
   const [showTips, setShowTips] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState(1);
+  const [selectedPatient, setSelectedPatient] = useState(null);
 
   // Fetch list of patients
   const {
@@ -29,7 +29,10 @@ export default function Dashboard() {
   } = useQuery(GET_PATIENTS_QUERY);
 
   const handlePatientChange = (e) => {
-    setSelectedPatient(e.target.value);
+    setSelectedPatient({
+      id: e.target.value,
+      name: e.target.options[e.target.selectedIndex].text,
+    });
   };
 
   return (
@@ -94,7 +97,7 @@ export default function Dashboard() {
             <div className='dashboard-left'>
               <div className='dashboard-tile dashboard-vitals'>
                 <h2 className='dashboad-title'>Clinical Records</h2>
-                <ClinicalVisits />
+                <ClinicalVisits selectedPatient={selectedPatient} />
               </div>
             </div>
 
@@ -105,7 +108,9 @@ export default function Dashboard() {
               </div>
 
               <div className='dashboard-tile dashboard-emergency-alert'>
-                <h2 className='dashboad-title'>Assign to Doctor</h2>
+                <h2 className='dashboad-title'>
+                  Latest Symptom Checklist Details
+                </h2>
                 <AssignPatients />
               </div>
             </div>

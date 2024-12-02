@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { useQuery, useMutation, gql } from "@apollo/client";
-import { Spinner, Alert, Form, Button } from "react-bootstrap";
+import { Spinner, Alert, Button } from "react-bootstrap";
 
 // Fetch Unassigned Patients
 const GET_UNASSIGNED_PATIENTS = gql`
@@ -26,33 +26,32 @@ const ASSIGN_PATIENT_MUTATION = gql`
   }
 `;
 
-const AssignPatients = ({ nurseId }) => {
-  const { loading, error, data } = useQuery(GET_UNASSIGNED_PATIENTS);
-  const [assignPatient] = useMutation(ASSIGN_PATIENT_MUTATION);
-  const [selectedPatient, setSelectedPatient] = useState("");
+const AssignPatients = ({ nurseId, selectedPatient }) => {
+  // const { loading, error, data } = useQuery(GET_UNASSIGNED_PATIENTS);
+  // const [assignPatient] = useMutation(ASSIGN_PATIENT_MUTATION);
+  // const [selectedPatient, setSelectedPatient] = useState("");
 
-  if (loading) return <Spinner animation='border' />;
-  if (error) return <Alert variant='danger'>{error.message}</Alert>;
+  // if (loading) return <Spinner animation='border' />;
+  // if (error) return <Alert variant='danger'>{error.message}</Alert>;
 
-  const unassignedPatients = data.listUsers.filter(
-    (patient) => !patient.assignedNurse
-  );
+  // const unassignedPatients = data.listUsers.filter(
+  //   (patient) => !patient.assignedNurse
+  // );
 
-  const handleAssign = async () => {
-    try {
-      await assignPatient({
-        variables: { patientId: selectedPatient, nurseId },
-      });
-      alert("Patient assigned successfully!");
-    } catch (error) {
-      alert("Error assigning patient: " + error.message);
-    }
-  };
+  // const handleAssign = async () => {
+  //   try {
+  //     await assignPatient({
+  //       variables: { patientId: selectedPatient, nurseId },
+  //     });
+  //     alert("Patient assigned successfully!");
+  //   } catch (error) {
+  //     alert("Error assigning patient: " + error.message);
+  //   }
+  // };
 
   return (
     <div>
-      <Form.Group>
-        <Form.Label>Select Patient</Form.Label>
+      {/* <Form.Group className='mb-4'>
         <Form.Select
           value={selectedPatient}
           onChange={(e) => setSelectedPatient(e.target.value)}
@@ -64,15 +63,22 @@ const AssignPatients = ({ nurseId }) => {
             </option>
           ))}
         </Form.Select>
-      </Form.Group>
-      <Button onClick={handleAssign} disabled={!selectedPatient}>
-        Assign
+      </Form.Group> */}
+      <Button
+        onClick={
+          //  handleAssign
+          console.log("Assigning patient to nurse")
+        }
+        disabled={!selectedPatient}
+      >
+        Send Profile to Doctor
       </Button>
     </div>
   );
 };
 AssignPatients.propTypes = {
   nurseId: PropTypes.string.isRequired,
+  selectedPatient: PropTypes.string.isRequired,
 };
 
 export default AssignPatients;
