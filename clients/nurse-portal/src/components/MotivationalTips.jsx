@@ -107,8 +107,8 @@ function MotivationalTips() {
     <div>
       {/* Add New Tip */}
       <Form onSubmit={handleAddTip}>
-        <Form.Group>
-          <Form.Label>Enter New Motivational Tip</Form.Label>
+        <Form.Group className='mb-4'>
+          <Form.Label>Enter Motivational Tip</Form.Label>
           <Form.Control
             as='textarea'
             rows={3}
@@ -116,7 +116,7 @@ function MotivationalTips() {
             onChange={(e) => setNewTip(e.target.value)}
           />
         </Form.Group>
-        <Button type='submit'>Add Tip</Button>
+        <Button type='submit'>Add Motivational Tip</Button>
       </Form>
 
       {/* Motivational Tips Table */}

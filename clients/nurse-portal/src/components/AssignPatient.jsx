@@ -1,32 +1,30 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
-import { useQuery, useMutation, gql } from "@apollo/client";
-import { Spinner, Alert, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 
-// Fetch Unassigned Patients
-const GET_UNASSIGNED_PATIENTS = gql`
-  query {
-    listUsers(role: "patient") {
-      id
-      name
-      assignedNurse {
-        id
-      }
-    }
-  }
-`;
+// // Fetch Unassigned Patients
+// const GET_UNASSIGNED_PATIENTS = gql`
+//   query {
+//     listUsers(role: "patient") {
+//       id
+//       name
+//       assignedNurse {
+//         id
+//       }
+//     }
+//   }
+// `;
 
-// Assign Patient Mutation
-const ASSIGN_PATIENT_MUTATION = gql`
-  mutation AssignPatientToNurse($patientId: ID!, $nurseId: ID!) {
-    assignPatientToNurse(patientId: $patientId, nurseId: $nurseId) {
-      id
-      name
-    }
-  }
-`;
+// // Assign Patient Mutation
+// const ASSIGN_PATIENT_MUTATION = gql`
+//   mutation AssignPatientToNurse($patientId: ID!, $nurseId: ID!) {
+//     assignPatientToNurse(patientId: $patientId, nurseId: $nurseId) {
+//       id
+//       name
+//     }
+//   }
+// `;
 
-const AssignPatients = ({ nurseId, selectedPatient }) => {
+const AssignPatients = ({ selectedPatient }) => {
   // const { loading, error, data } = useQuery(GET_UNASSIGNED_PATIENTS);
   // const [assignPatient] = useMutation(ASSIGN_PATIENT_MUTATION);
   // const [selectedPatient, setSelectedPatient] = useState("");
@@ -77,7 +75,6 @@ const AssignPatients = ({ nurseId, selectedPatient }) => {
   );
 };
 AssignPatients.propTypes = {
-  nurseId: PropTypes.string.isRequired,
   selectedPatient: PropTypes.string.isRequired,
 };
 

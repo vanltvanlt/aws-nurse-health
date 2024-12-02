@@ -54,11 +54,13 @@
 .dashboard-tips-popup {
   position: fixed;
   width: 50%;
-  height: 50%;
+  height: 70%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
+  /* Allow for scrolling */
+  overflow-y: auto;
 }
 
 .link {
@@ -84,4 +86,12 @@
   padding: 5px;
   margin-bottom: 20px;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  cursor: pointer;
 }

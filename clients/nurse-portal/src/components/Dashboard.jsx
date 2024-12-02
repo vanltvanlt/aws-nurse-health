@@ -47,7 +47,7 @@ export default function Dashboard() {
               onClick={() => setShowTips(!showTips)}
             ></div>
             <div className='dashboard-tips-popup'>
-              <div onClick={() => setShowTips(!showTips)}>Close</div>
+              <div className='close-button' onClick={() => setShowTips(!showTips)}>Close</div>
               <h2 className='dashboad-title'>Motivational Tips</h2>
               <MotivationalTips />
             </div>
