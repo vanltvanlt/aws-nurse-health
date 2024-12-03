@@ -1,4 +1,4 @@
-import "./App.css";
+import "./styles/App.css";
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import AuthenticationForm from "./components/AuthenticationForm";
@@ -10,11 +10,11 @@ const client = new ApolloClient({
 });
 
 function App() {
-  
   return (
     <ApolloProvider client={client}>
-      <AuthenticationForm />
-
+      <div className='micro-frontend-container'>
+        <AuthenticationForm />
+      </div>
     </ApolloProvider>
   );
 }

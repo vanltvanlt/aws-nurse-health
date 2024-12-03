@@ -3,6 +3,8 @@ import { Nav } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/App.css";
 import { gql, useMutation } from "@apollo/client";
+import PropTypes from "prop-types";
+import "../styles/Navbar.css";
 
 const LOGOUT_USER_MUTATION = gql`
   mutation {
@@ -10,7 +12,7 @@ const LOGOUT_USER_MUTATION = gql`
   }
 `;
 
-export default function Navbar() {
+export default function Navbar({ currentAuthUser }) {
   const [logout] = useMutation(LOGOUT_USER_MUTATION, {
     onCompleted: (data) => {
       console.log(data);
@@ -29,9 +31,11 @@ export default function Navbar() {
         </a>
 
         <div className='navbar-nav'>
-          <a className='nav-link text'>Welcome, USER</a>
+          <a className='nav-link non-selectable nav-welcome'>
+            Welcome, {currentAuthUser?.name}
+          </a>
           <a
-            className='nav-link logout-button'
+            className='nav-link non-selectable nav-button'
             onClick={() => {
               logout();
             }}
@@ -43,3 +47,7 @@ export default function Navbar() {
     </Nav>
   );
 }
+
+Navbar.propTypes = {
+  currentAuthUser: PropTypes.object.isRequired,
+};

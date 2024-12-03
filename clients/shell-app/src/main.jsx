@@ -7,6 +7,7 @@ import {
   createHttpLink,
   ApolloProvider,
 } from "@apollo/client";
+import "./styles/index.css";
 
 // Set up the Apollo Client
 const httpLink = createHttpLink({
@@ -22,7 +23,9 @@ const client = new ApolloClient({
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <div className='shell-app-container'>
+        <App />
+      </div>
     </ApolloProvider>
   </StrictMode>
 );

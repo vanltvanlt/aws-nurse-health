@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useQuery, gql } from "@apollo/client";
+import "./styles/index.css";
 
 const AuthenticationApp = lazy(() => import("authenticationApp/App"));
 const NursePortalApp = lazy(() => import("nursePortalApp/App"));
@@ -57,7 +58,7 @@ function App() {
   if (error) return <div>Error! {error.message}</div>;
 
   return (
-    <div className='App'>
+    <div className='shell-app-container'>
       <Suspense fallback={<div>Loading...</div>}>
         {!isLoggedIn ? (
           <AuthenticationApp />

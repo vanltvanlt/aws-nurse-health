@@ -48,16 +48,26 @@ function ClinicalVisits({ selectedPatient }) {
               <th>Heart Rate</th>
               <th>Blood Pressure</th>
               <th>Respiratory Rate</th>
+              <th>Body Weight</th>
             </tr>
           </thead>
           <tbody>
             {vitalsData.getUser.vitalSigns.map((vital) => (
               <tr key={vital.id}>
                 <td>{new Date(parseInt(vital.date)).toLocaleString()}</td>
-                <td>{vital.bodyTemperature} °C</td>
-                <td>{vital.heartRate} bpm</td>
-                <td>{vital.bloodPressure}</td>
-                <td>{vital.respiratoryRate} breaths/min</td>
+                <td>
+                  {vital.bodyTemperature ? vital.bodyTemperature + "  °C" : ""}
+                </td>
+                <td>{vital.heartRate ? vital.heartRate + "  bpm" : ""}</td>
+                <td>
+                  {vital.bloodPressure ? vital.bloodPressure + "  mm Hg" : ""}
+                </td>
+                <td>
+                  {vital.respiratoryRate
+                    ? vital.respiratoryRate + "  breaths/min"
+                    : ""}
+                </td>
+                <td>{vital.weight ? vital.weight + " kg" : ""}</td>
               </tr>
             ))}
           </tbody>

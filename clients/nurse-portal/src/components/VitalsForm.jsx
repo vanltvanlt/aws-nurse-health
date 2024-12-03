@@ -75,7 +75,7 @@ function VitalsForm({ selectedPatient }) {
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group>
-        <Form.Label>Body Temperature</Form.Label>
+        <Form.Label>Body Temperature (C°)</Form.Label>
         <Form.Control
           type='number'
           name='temperature'
@@ -85,7 +85,7 @@ function VitalsForm({ selectedPatient }) {
       </Form.Group>
 
       <Form.Group className='mt-3'>
-        <Form.Label>Heart Rate</Form.Label>
+        <Form.Label>Heart Rate (bpm)</Form.Label>
         <Form.Control
           type='number'
           name='heartRate'
@@ -95,7 +95,7 @@ function VitalsForm({ selectedPatient }) {
       </Form.Group>
 
       <Form.Group>
-        <Form.Label className='mt-3'>Blood Pressure</Form.Label>
+        <Form.Label className='mt-3'>Blood Pressure (mm Hg)</Form.Label>
         <Form.Control
           type='text'
           name='bloodPressure'
@@ -104,8 +104,8 @@ function VitalsForm({ selectedPatient }) {
         />
       </Form.Group>
 
-      <Form.Group className='mb-4'>
-        <Form.Label className='mt-3'>Respiratory Rate</Form.Label>
+      <Form.Group className='mt-3'>
+        <Form.Label className='mt-3'>Respiratory Rate (breaths/min)</Form.Label>
         <Form.Control
           type='number'
           name='respiratoryRate'
@@ -114,8 +114,8 @@ function VitalsForm({ selectedPatient }) {
         />
       </Form.Group>
 
-      <Form.Group>
-        <Form.Label className='mt-3'>Weight (kg)</Form.Label>
+      <Form.Group className='mt-3 mb-4'>
+        <Form.Label>Weight (kg)</Form.Label>
         <Form.Control
           type='number'
           name='bodyWeight'
@@ -123,7 +123,9 @@ function VitalsForm({ selectedPatient }) {
           onChange={handleChange}
         />
       </Form.Group>
-      <Button type='submit'>Submit Vitals</Button>
+      <Button type='submit' className='button'>
+        Submit Vitals
+      </Button>
     </Form>
   );
 }

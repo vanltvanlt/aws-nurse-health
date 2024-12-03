@@ -14,7 +14,9 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Dashboard />
+      <div className='micro-frontend-container'>
+        <Dashboard />
+      </div>
     </ApolloProvider>
   );
 }

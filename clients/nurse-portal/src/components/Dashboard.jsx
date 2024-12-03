@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import { Form, Spinner, Alert, Container } from "react-bootstrap";
 import { gql, useQuery } from "@apollo/client";
@@ -17,9 +17,30 @@ const GET_PATIENTS_QUERY = gql`
   }
 `;
 
+// GraphQL query to check the current user's authentication status
+const CURRENT_USER_QUERY = gql`
+  query CurrentUser {
+    currentUser {
+      id
+      name
+      email
+      role
+      vitalSigns {
+        id
+        bodyTemperature
+        heartRate
+        bloodPressure
+        respiratoryRate
+        date
+      }
+    }
+  }
+`;
+
 export default function Dashboard() {
   const [showTips, setShowTips] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [currentAuthUser, setCurrentAuthUser] = useState(null);
 
   // Fetch list of patients
   const {
@@ -35,9 +56,20 @@ export default function Dashboard() {
     });
   };
 
+  const { loading, error, data } = useQuery(CURRENT_USER_QUERY, {
+    fetchPolicy: "network-only",
+  });
+
+  useEffect(() => {
+    // Check the authentication status based on the query's result
+    if (!loading && !error) {
+      setCurrentAuthUser(data.currentUser);
+    }
+  }, [loading, error, data]);
+
   return (
     <div>
-      <Navbar />
+      <Navbar currentAuthUser={currentAuthUser} />
       <Container className='mb-5'>
         {/* ************ POPUP MOTIVATIONAL TIPS ************ */}
         {showTips && (

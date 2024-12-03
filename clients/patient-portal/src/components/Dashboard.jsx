@@ -5,11 +5,12 @@ import EmergencyAlert from "./EmergencyAlert";
 import SymptomChecklist from "./SymptomChecklist";
 import "../styles/Dashboard.css";
 import { gql, useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
 
-// GraphQL Queries
-const GET_PATIENT_QUERY = gql`
-  query GetPatient {
-    getUser(id: $userId) {
+// GraphQL query to check the current user's authentication status
+const CURRENT_USER_QUERY = gql`
+  query CurrentUser {
+    currentUser {
       id
       name
       email
@@ -27,21 +28,29 @@ const GET_PATIENT_QUERY = gql`
 `;
 
 export default function Dashboard() {
-  const userId = localStorage.getItem("userId");
-  const { data: loggedUser } = useQuery(GET_PATIENT_QUERY, {
-    variables: { userId: userId },
+  const [currentAuthUser, setCurrentAuthUser] = useState(null);
+
+  const { loading, error, data } = useQuery(CURRENT_USER_QUERY, {
+    fetchPolicy: "network-only",
   });
+
+  useEffect(() => {
+    // Check the authentication status based on the query's result
+    if (!loading && !error) {
+      setCurrentAuthUser(data.currentUser);
+    }
+  }, [loading, error, data]);
 
   return (
     <>
-      <Navbar />
+      <Navbar currentAuthUser={currentAuthUser} />
       <Container className='mb-5'>
         {/* ************ HEADER ************ */}
         <div className='dashboard-tile dashboard-header'>
           <h2 className='dashboad-title'>
             Welcome to the Sinai Hospital 🏥 Patient Portal
           </h2>
-          <p>Daily Tip: {loggedUser?.name}</p>
+          <p>Daily Tip: {currentAuthUser?.name}</p>
         </div>
 
         {/* ************ DASHBOARD TILES ************ */}

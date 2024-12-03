@@ -125,7 +125,7 @@ function DailyInfoForm() {
         />
       </Form.Group>
 
-      <Button type='submit'>Submit Information</Button>
+      <Button type='submit' className="button">Submit Information</Button>
     </Form>
   );
 }

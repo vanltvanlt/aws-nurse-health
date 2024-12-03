@@ -66,7 +66,9 @@ export default function SymptomChecklist() {
           />
         ))}
       </div>
-      <Button type='submit'>Submit Symptoms</Button>
+      <Button type='submit' className='button'>
+        Submit Symptoms
+      </Button>
     </Form>
   );
 }

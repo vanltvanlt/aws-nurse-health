@@ -7,7 +7,9 @@ export default function EmergencyAlert() {
 
   return (
     <div>
-      <Button onClick={handleAlert}>Send Alert</Button>
+      <Button onClick={handleAlert} className='button'>
+        Send Alert
+      </Button>
     </div>
   );
 }

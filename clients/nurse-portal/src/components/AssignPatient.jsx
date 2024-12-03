@@ -63,6 +63,7 @@ const AssignPatients = ({ selectedPatient }) => {
         </Form.Select>
       </Form.Group> */}
       <Button
+        className='button'
         onClick={
           //  handleAssign
           console.log("Assigning patient to nurse")
@@ -74,6 +75,7 @@ const AssignPatients = ({ selectedPatient }) => {
     </div>
   );
 };
+
 AssignPatients.propTypes = {
   selectedPatient: PropTypes.string.isRequired,
 };

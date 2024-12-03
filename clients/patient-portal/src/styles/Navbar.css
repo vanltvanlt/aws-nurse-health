@@ -1,0 +1,26 @@
+.non-selectable {
+  user-select: none;
+  color: rgb(39, 39, 39);
+}
+
+.non-selectable:hover {
+  color: rgb(39, 39, 39);
+}
+
+.nav-welcome {
+  margin: auto;
+  margin-right: 20px;
+}
+
+.nav-button {
+  cursor: pointer;
+  border: 1px solid #26a57f;
+  border-radius: 5px;
+  padding: auto 20px !important;
+}
+
+.nav-button:hover {
+  color: #26a57f;
+  background-color: rgb(255, 255, 255);
+  border-color: #7dc0ac;
+}
