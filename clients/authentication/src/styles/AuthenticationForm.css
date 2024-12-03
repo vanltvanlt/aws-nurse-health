@@ -4,6 +4,10 @@
   border-radius: 20px;
 }
 
+body {
+  background-color: #f8f9fa !important;
+}
+
 .image-auth {
   border-radius: 20px 0 0 20px;
 }

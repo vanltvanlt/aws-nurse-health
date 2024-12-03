@@ -122,7 +122,7 @@ export default function Dashboard() {
             Manage Motivational Tips
           </a>
           <a className='link' href='#' onClick={() => setFocus("Alert")}>
-            View Alert
+            View Alerts
           </a>
         </div>
 
