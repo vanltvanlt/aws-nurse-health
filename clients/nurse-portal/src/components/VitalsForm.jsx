@@ -31,7 +31,7 @@ const ADD_VITAL_SIGN_MUTATION = gql`
   }
 `;
 
-function VitalsForm({ selectedPatient }) {
+function VitalsForm({ selectedPatient, updatePatient }) {
   const [vitals, setVitals] = useState({
     temperature: "",
     heartRate: "",
@@ -50,11 +50,6 @@ function VitalsForm({ selectedPatient }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!selectedPatient) {
-      alert("Please select a patient");
-      return;
-    }
-
     try {
       await addVitalSign({
         variables: {
@@ -66,7 +61,18 @@ function VitalsForm({ selectedPatient }) {
           bodyWeight: parseFloat(vitals.bodyWeight),
         },
       });
-      alert("Vital signs added successfully!");
+
+      // Clear the form
+      setVitals({
+        temperature: "",
+        heartRate: "",
+        bloodPressure: "",
+        respiratoryRate: "",
+        bodyWeight: "",
+      });
+
+      // Update the selected patient with the new vital signs
+      updatePatient();
     } catch (err) {
       alert("Error adding vital signs: " + err.message);
     }
@@ -129,8 +135,10 @@ function VitalsForm({ selectedPatient }) {
     </Form>
   );
 }
+
 VitalsForm.propTypes = {
   selectedPatient: PropTypes.object.isRequired,
+  updatePatient: PropTypes.func.isRequired,
 };
 
 export default VitalsForm;

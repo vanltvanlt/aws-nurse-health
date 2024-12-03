@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const VitalSign = require("../models/VitalSigns");
 const MotivationalTip = require("../models/MotivationalTip");
+const Alert = require("../models/Alert");
 
 const resolvers = {
   // ****************** QUERIES ******************
@@ -41,6 +42,16 @@ const resolvers = {
     },
 
     // ------------------ Motivational Tips ------------------
+    getRandomMotivationalTip: async () => {
+      try {
+        const count = await MotivationalTip.countDocuments();
+        const randomIndex = Math.floor(Math.random() * count);
+        return await MotivationalTip.findOne().skip(randomIndex);
+      } catch (error) {
+        throw new Error("Failed to fetch motivational tip: " + error.message);
+      }
+    },
+
     listMotivationalTips: async () => {
       try {
         return await MotivationalTip.find()
@@ -48,6 +59,15 @@ const resolvers = {
           .sort({ createdAt: -1 }); // Sort by most recent
       } catch (error) {
         throw new Error("Failed to fetch motivational tips: " + error.message);
+      }
+    },
+
+    // ------------------ Alerts ------------------
+    listAlerts: async () => {
+      try {
+        return await Alert.find().populate("user").sort({ createdAt: 1 }); // Sort by most recent
+      } catch (error) {
+        throw new Error("Failed to fetch alerts: " + error.message);
       }
     },
   },
@@ -170,7 +190,14 @@ const resolvers = {
     // ------------------ Vital Signs ------------------
     addVitalSign: async (
       _,
-      { userId, bodyTemperature, heartRate, bloodPressure, respiratoryRate }
+      {
+        userId,
+        bodyTemperature,
+        heartRate,
+        bloodPressure,
+        respiratoryRate,
+        bodyWeight,
+      }
     ) => {
       const vitalSign = new VitalSign({
         user: userId,
@@ -178,6 +205,7 @@ const resolvers = {
         heartRate,
         bloodPressure,
         respiratoryRate,
+        bodyWeight,
       });
       await vitalSign.save();
       return vitalSign;
@@ -218,6 +246,28 @@ const resolvers = {
         return deletedTip;
       } catch (error) {
         throw new Error("Failed to delete motivational tip: " + error.message);
+      }
+    },
+
+    // ------------------ Alerts ------------------
+    addAlert: async (_, { user }) => {
+      try {
+        const newAlert = new Alert({ user: user.id });
+        return await newAlert.save();
+      } catch (error) {
+        throw new Error("Failed to add alert: " + error.message);
+      }
+    },
+
+    deleteAlert: async (_, { id }) => {
+      try {
+        const deletedAlert = await Alert.findByIdAndDelete(id);
+        if (!deletedAlert) {
+          throw new Error("Alert not found");
+        }
+        return deletedAlert;
+      } catch (error) {
+        throw new Error("Failed to delete alert: " + error.message);
       }
     },
   },

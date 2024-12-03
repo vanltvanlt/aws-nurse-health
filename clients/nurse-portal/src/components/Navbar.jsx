@@ -48,5 +48,5 @@ export default function Navbar({ currentAuthUser }) {
 }
 
 Navbar.propTypes = {
-  currentAuthUser: PropTypes.object.isRequired,
+  currentAuthUser: PropTypes.object,
 };

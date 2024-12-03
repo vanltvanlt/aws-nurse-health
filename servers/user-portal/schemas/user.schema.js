@@ -30,11 +30,20 @@ const typeDefs = gql`
     user: User
   }
 
+  type Alert {
+    id: ID!
+    createdAt: String!
+    user: User
+  }
+
   type Query {
     currentUser: User
     getUser(id: ID!): User
     listUsers(role: String): [User] # Filter by role
+    getRandomMotivationalTip: MotivationalTip
     listMotivationalTips: [MotivationalTip]
+
+    listAlerts: [Alert]
   }
 
   type Mutation {
@@ -65,6 +74,9 @@ const typeDefs = gql`
     updateMotivationalTip(id: ID!, content: String!): MotivationalTip
 
     deleteMotivationalTip(id: ID!): MotivationalTip
+
+    addAlert: Alert
+    deleteAlert(id: ID!): Alert
 
     updateUser(
       id: ID!

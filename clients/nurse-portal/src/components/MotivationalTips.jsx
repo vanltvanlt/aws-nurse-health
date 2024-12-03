@@ -65,7 +65,6 @@ function MotivationalTips() {
       await addTip({ variables: { content: newTip } });
       setNewTip("");
       refetch(); // Refresh the list
-      alert("Motivational tip added successfully!");
     } catch (err) {
       alert("Error adding tip: " + err.message);
     }
@@ -92,7 +91,6 @@ function MotivationalTips() {
       try {
         await deleteTip({ variables: { id } });
         refetch();
-        alert("Motivational tip deleted successfully!");
       } catch (err) {
         alert("Error deleting tip: " + err.message);
       }
@@ -116,7 +114,9 @@ function MotivationalTips() {
             onChange={(e) => setNewTip(e.target.value)}
           />
         </Form.Group>
-        <Button type='submit'>Add Motivational Tip</Button>
+        <Button type='submit' className='button mb-4'>
+          Add Motivational Tip
+        </Button>
       </Form>
 
       {/* Motivational Tips Table */}
@@ -143,13 +143,11 @@ function MotivationalTips() {
                     setShowModal(true);
                   }}
                 >
-                  {/* Edit Icon */}
-                  <img src='./edit.png' alt='Edit' className='icon' />
+                  <img src='./edit.png' alt='Edit Button' className='icon' />
                 </div>
 
                 <div onClick={() => handleDeleteTip(tip.id)}>
-                  {/* Edit Icon */}
-                  <img src='./trash.png' alt='Edit' className='icon' />
+                  <img src='./trash.png' alt='Delete Button' className='icon' />
                 </div>
               </td>
             </tr>
@@ -177,7 +175,11 @@ function MotivationalTips() {
           <Button variant='secondary' onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant='primary' onClick={handleUpdateTip}>
+          <Button
+            variant='primary'
+            onClick={handleUpdateTip}
+            className='button'
+          >
             Save Changes
           </Button>
         </Modal.Footer>
@@ -187,3 +189,4 @@ function MotivationalTips() {
 }
 
 export default MotivationalTips;
+alert;

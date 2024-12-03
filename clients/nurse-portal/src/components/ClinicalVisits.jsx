@@ -11,6 +11,7 @@ const GET_PATIENT_VITAL_SIGNS_QUERY = gql`
         heartRate
         bloodPressure
         respiratoryRate
+        bodyWeight
         date
       }
     }
@@ -52,24 +53,29 @@ function ClinicalVisits({ selectedPatient }) {
             </tr>
           </thead>
           <tbody>
-            {vitalsData.getUser.vitalSigns.map((vital) => (
-              <tr key={vital.id}>
-                <td>{new Date(parseInt(vital.date)).toLocaleString()}</td>
-                <td>
-                  {vital.bodyTemperature ? vital.bodyTemperature + "  °C" : ""}
-                </td>
-                <td>{vital.heartRate ? vital.heartRate + "  bpm" : ""}</td>
-                <td>
-                  {vital.bloodPressure ? vital.bloodPressure + "  mm Hg" : ""}
-                </td>
-                <td>
-                  {vital.respiratoryRate
-                    ? vital.respiratoryRate + "  breaths/min"
-                    : ""}
-                </td>
-                <td>{vital.weight ? vital.weight + " kg" : ""}</td>
-              </tr>
-            ))}
+            {vitalsData.getUser.vitalSigns
+              .slice()
+              .reverse()
+              .map((vital) => (
+                <tr key={vital.id}>
+                  <td>{new Date(parseInt(vital.date)).toLocaleString()}</td>
+                  <td>
+                    {vital.bodyTemperature
+                      ? vital.bodyTemperature + "  °C"
+                      : ""}
+                  </td>
+                  <td>{vital.heartRate ? vital.heartRate + "  bpm" : ""}</td>
+                  <td>
+                    {vital.bloodPressure ? vital.bloodPressure + "  mm Hg" : ""}
+                  </td>
+                  <td>
+                    {vital.respiratoryRate
+                      ? vital.respiratoryRate + "  breaths/min"
+                      : ""}
+                  </td>
+                  <td>{vital.bodyWeight ? vital.bodyWeight + " kg" : ""}</td>
+                </tr>
+              ))}
           </tbody>
         </Table>
       ) : (

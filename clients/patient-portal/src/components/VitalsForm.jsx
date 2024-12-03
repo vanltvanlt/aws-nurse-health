@@ -30,7 +30,7 @@ const ADD_VITAL_SIGN_MUTATION = gql`
   }
 `;
 
-function DailyInfoForm() {
+function VitalsForm() {
   const [info, setInfo] = useState({
     heartRate: "",
     bloodPressure: "",
@@ -125,9 +125,11 @@ function DailyInfoForm() {
         />
       </Form.Group>
 
-      <Button type='submit' className="button">Submit Information</Button>
+      <Button type='submit' className='button'>
+        Submit Information
+      </Button>
     </Form>
   );
 }
 
-export default DailyInfoForm;
+export default VitalsForm;

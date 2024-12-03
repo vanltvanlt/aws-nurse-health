@@ -6,16 +6,7 @@ import MotivationalTips from "./MotivationalTips";
 import ClinicalVisits from "./ClinicalVisits";
 import VitalsForm from "./VitalsForm";
 import AssignPatients from "./AssignPatient";
-
-// GraphQL Queries
-const GET_PATIENTS_QUERY = gql`
-  query GetPatients {
-    listUsers(role: "patient") {
-      id
-      name
-    }
-  }
-`;
+import AlertPopup from "./AlertPopup";
 
 // GraphQL query to check the current user's authentication status
 const CURRENT_USER_QUERY = gql`
@@ -37,8 +28,18 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
+// GraphQL Queries
+const GET_PATIENTS_QUERY = gql`
+  query GetPatients {
+    listUsers(role: "patient") {
+      id
+      name
+    }
+  }
+`;
+
 export default function Dashboard() {
-  const [showTips, setShowTips] = useState(false);
+  const [focus, setFocus] = useState("Dashboard");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [currentAuthUser, setCurrentAuthUser] = useState(null);
 
@@ -72,16 +73,16 @@ export default function Dashboard() {
       <Navbar currentAuthUser={currentAuthUser} />
       <Container className='mb-5'>
         {/* ************ POPUP MOTIVATIONAL TIPS ************ */}
-        {showTips && (
+        {focus == "Tips" && (
           <div>
             <div
               className='dashboard-tips-overlay'
-              onClick={() => setShowTips(!showTips)}
+              onClick={() => setFocus("Dashboard")}
             ></div>
             <div className='dashboard-tips-popup'>
               <div
                 className='close-button'
-                onClick={() => setShowTips(!showTips)}
+                onClick={() => setFocus("Dashboard")}
               >
                 Close
               </div>
@@ -91,13 +92,37 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* ************ POPUP MOTIVATIONAL TIPS ************ */}
+        {focus == "Alert" && (
+          <div>
+            <div
+              className='dashboard-tips-overlay'
+              onClick={() => setFocus("Dashboard")}
+            ></div>
+            <div className='dashboard-tips-popup'>
+              <div
+                className='close-button'
+                onClick={() => setFocus("Dashboard")}
+              >
+                Close
+              </div>
+              <h2 className='dashboad-title'>Emergency Alerts</h2>
+              <AlertPopup />
+            </div>
+          </div>
+        )}
+
         {/* ************ HEADER ************ */}
         <div className='dashboard-tile dashboard-header'>
           <h2 className='dashboad-title'>
-            Welcome to the Sinai Hospital 🏥 Nurse Portal
+            🩺 Nurse Portal{" "}
+            {currentAuthUser?.name ? "- Welcome " + currentAuthUser?.name : ""}
           </h2>
-          <a className='link' href='#' onClick={() => setShowTips(!showTips)}>
-            Motivational Tips
+          <a className='link' href='#' onClick={() => setFocus("Tips")}>
+            Manage Motivational Tips
+          </a>
+          <a className='link' href='#' onClick={() => setFocus("Alert")}>
+            View Alert
           </a>
         </div>
 
@@ -118,7 +143,7 @@ export default function Dashboard() {
                 onChange={handlePatientChange}
               >
                 <option value=''>Select a patient</option>
-                {patientsData.listUsers.map((patient) => (
+                {patientsData?.listUsers.map((patient) => (
                   <option key={patient.id} value={patient.id}>
                     {patient.name}
                   </option>

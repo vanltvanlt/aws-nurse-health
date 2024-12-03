@@ -1,6 +1,6 @@
 import { Container } from "react-bootstrap";
 import Navbar from "./navbar";
-import DailyInfoForm from "./DailyInfoForm";
+import DailyInfoForm from "./VitalsForm";
 import EmergencyAlert from "./EmergencyAlert";
 import SymptomChecklist from "./SymptomChecklist";
 import "../styles/Dashboard.css";
@@ -27,12 +27,25 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
+const GET_RANDOM_TIP_QUERY = gql`
+  query GetRandomTip {
+    getRandomMotivationalTip {
+      content
+    }
+  }
+`;
+
 export default function Dashboard() {
   const [currentAuthUser, setCurrentAuthUser] = useState(null);
 
   const { loading, error, data } = useQuery(CURRENT_USER_QUERY, {
     fetchPolicy: "network-only",
   });
+
+  // Fetch list of patients
+  const { data: tipData } = useQuery(GET_RANDOM_TIP_QUERY);
+
+  console.log(tipData);
 
   useEffect(() => {
     // Check the authentication status based on the query's result
@@ -48,9 +61,10 @@ export default function Dashboard() {
         {/* ************ HEADER ************ */}
         <div className='dashboard-tile dashboard-header'>
           <h2 className='dashboad-title'>
-            Welcome to the Sinai Hospital 🏥 Patient Portal
+            ⚕️ Patient Portal
+            {currentAuthUser?.name ? "- Welcome " + currentAuthUser?.name : ""}
           </h2>
-          <p>Daily Tip: {currentAuthUser?.name}</p>
+          <p>Daily Tip: {tipData?.getRandomMotivationalTip?.content}</p>
         </div>
 
         {/* ************ DASHBOARD TILES ************ */}
