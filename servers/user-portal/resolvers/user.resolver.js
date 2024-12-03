@@ -260,7 +260,7 @@ const resolvers = {
       }
     },
 
-    deleteAlert: async (_, __, { id }) => {
+    deleteAlert: async (_, { id }) => {
       try {
         const deletedAlert = await Alert.findByIdAndDelete(id);
         if (!deletedAlert) {
