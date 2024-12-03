@@ -114,15 +114,15 @@ function AuthenticationForm() {
                   <div className='col-md-6 col-lg-6 d-flex align-items-top'>
                     <div className='card-body p-2 p-lg-5 text-black'></div>
                     <Container className='p-2'>
-                      <h1 className='mb-5 mt-5'>Portal</h1>
+                      <h1 className='mb-5 mt-5'>Sinai Hospital 🏥</h1>
                       <Row className='justify-content-md-center'>
                         <Col>
-                          {/* <Card>
-                            <Card.Header> */}
+                          {/* LOGIN / REGISTER - TAB */}
                           <Nav
                             variant='tabs'
                             activeKey={activeTab}
                             onSelect={(k) => setActiveTab(k)}
+                            className='nav-tabs'
                           >
                             <Nav.Item>
                               <Nav.Link eventKey='login'>Login</Nav.Link>
@@ -131,13 +131,11 @@ function AuthenticationForm() {
                               <Nav.Link eventKey='signup'>Sign Up</Nav.Link>
                             </Nav.Item>
                           </Nav>
-                          {/* </Card.Header>
-                            <Card.Body> */}
 
-                          {/* If event type is Sigup show name and role drop down to select nurse or patient */}
+                          {/* REGISTER FIELDS */}
                           {activeTab === "signup" && (
                             <>
-                              <Form.Group className='mb-3'>
+                              <Form.Group className='mb-3  mt-3'>
                                 <Form.Label>Name</Form.Label>
                                 <Form.Control
                                   type='text'
@@ -161,9 +159,10 @@ function AuthenticationForm() {
                             </>
                           )}
 
+                          {/* COMMUN FIELDS */}
                           <Form onSubmit={handleSubmit}>
                             <Form.Group className='mb-3 mt-3'>
-                              <Form.Label>email</Form.Label>
+                              <Form.Label>Email</Form.Label>
                               <Form.Control
                                 type='text'
                                 placeholder='Enter your email'
@@ -182,15 +181,16 @@ function AuthenticationForm() {
                               />
                             </Form.Group>
 
+                            {/* ERROR DISPLAY */}
                             {authError && (
                               <Alert variant='danger'>{authError}</Alert>
                             )}
 
+                            {/* SUBMIT FORM BUTTON */}
                             <Button
-                              variant='primary'
                               type='submit'
                               disabled={isSubmitting}
-                              className='w-100'
+                              className='w-100 mt-3 button'
                             >
                               {isSubmitting ? (
                                 <Spinner

@@ -26,7 +26,7 @@ export default function Navbar({ currentAuthUser }) {
     <Nav className='navbar navbar-expand-lg navbar-light bg-light mb-5'>
       <div className='container-fluid'>
         <a className='navbar-brand' href='#'>
-          Sinai Hospital 🏥 Nurse Portal
+          Sinai Hospital 🏥 
         </a>
 
         <div className='navbar-nav'>

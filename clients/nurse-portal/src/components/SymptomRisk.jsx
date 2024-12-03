@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 
-
-
 const AssignPatients = ({ selectedPatient }) => {
+  console.log(selectedPatient);
   return (
     <div>
       <h3>List of Syptoms</h3>
