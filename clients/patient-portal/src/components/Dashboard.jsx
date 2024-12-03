@@ -56,6 +56,11 @@ export default function Dashboard() {
         {/* ************ DASHBOARD TILES ************ */}
         <div className='dashboard-container'>
           <div className='dashboard-left'>
+            <div className='dashboard-tile dashboard-emergency-alert'>
+              <h2 className='dashboad-title'>Emergency Alert</h2>
+              <EmergencyAlert />
+            </div>
+
             <div className='dashboard-tile dashboard-vitals'>
               <h2 className='dashboad-title'>Enter you Vitals</h2>
               <DailyInfoForm />
@@ -63,11 +68,6 @@ export default function Dashboard() {
           </div>
 
           <div className='dashboard-right'>
-            <div className='dashboard-tile dashboard-emergency-alert'>
-              <h2 className='dashboad-title'>Emergency Alert</h2>
-              <EmergencyAlert />
-            </div>
-
             <div className='dashboard-tile dashboard-symptoms-checklist'>
               <h2 className='dashboad-title'>Checklist for Symptoms</h2>
               <SymptomChecklist />
