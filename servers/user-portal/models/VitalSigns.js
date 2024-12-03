@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const VitalSignsSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
   bodyTemperature: {
@@ -16,10 +16,14 @@ const VitalSignsSchema = new Schema({
     required: true,
   },
   bloodPressure: {
-    type: String, // Example: "120/80"
+    type: String,
     required: true,
   },
   respiratoryRate: {
+    type: Number,
+    required: true,
+  },
+  bodyWeight: {
     type: Number,
     required: true,
   },
@@ -29,4 +33,4 @@ const VitalSignsSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('VitalSigns', VitalSignsSchema);
+module.exports = mongoose.model("VitalSigns", VitalSignsSchema);

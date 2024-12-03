@@ -3,16 +3,6 @@ import { Form, Button } from "react-bootstrap";
 import { gql, useMutation } from "@apollo/client";
 import PropTypes from "prop-types";
 
-// // GraphQL Queries and Mutations
-// const GET_PATIENTS_QUERY = gql`
-//   query GetPatients {
-//     listUsers(role: "patient") {
-//       id
-//       name
-//     }
-//   }
-// `;
-
 const ADD_VITAL_SIGN_MUTATION = gql`
   mutation AddVitalSign(
     $userId: ID!
@@ -20,6 +10,7 @@ const ADD_VITAL_SIGN_MUTATION = gql`
     $heartRate: Int!
     $bloodPressure: String!
     $respiratoryRate: Int!
+    $bodyWeight: Float!
   ) {
     addVitalSign(
       userId: $userId
@@ -27,12 +18,14 @@ const ADD_VITAL_SIGN_MUTATION = gql`
       heartRate: $heartRate
       bloodPressure: $bloodPressure
       respiratoryRate: $respiratoryRate
+      bodyWeight: $bodyWeight
     ) {
       id
       bodyTemperature
       heartRate
       bloodPressure
       respiratoryRate
+      bodyWeight
       date
     }
   }
@@ -44,11 +37,8 @@ function VitalsForm({ selectedPatient }) {
     heartRate: "",
     bloodPressure: "",
     respiratoryRate: "",
+    bodyWeight: "",
   });
-  // const [selectedPatient, setSelectedPatient] = useState("");
-
-  // Fetch patients
-  // const { loading, error, data } = useQuery(GET_PATIENTS_QUERY);
 
   // Mutation to add vital signs
   const [addVitalSign] = useMutation(ADD_VITAL_SIGN_MUTATION);
@@ -56,10 +46,6 @@ function VitalsForm({ selectedPatient }) {
   const handleChange = (event) => {
     setVitals({ ...vitals, [event.target.name]: event.target.value });
   };
-
-  // const handlePatientChange = (event) => {
-  //   setSelectedPatient(event.target.value);
-  // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -77,6 +63,7 @@ function VitalsForm({ selectedPatient }) {
           heartRate: parseInt(vitals.heartRate, 10),
           bloodPressure: vitals.bloodPressure,
           respiratoryRate: parseInt(vitals.respiratoryRate, 10),
+          bodyWeight: parseFloat(vitals.bodyWeight),
         },
       });
       alert("Vital signs added successfully!");
@@ -85,27 +72,8 @@ function VitalsForm({ selectedPatient }) {
     }
   };
 
-  // if (loading) return <p>Loading patients...</p>;
-  // if (error) return <p>Error fetching patients: {error.message}</p>;
-
   return (
     <Form onSubmit={handleSubmit}>
-      {/* <Form.Group>
-        <Form.Label>Select Patient</Form.Label>
-        <Form.Control
-          as='select'
-          value={selectedPatient}
-          onChange={handlePatientChange}
-        >
-          <option value=''>Select a patient</option>
-          {data.listUsers.map((patient) => (
-            <option key={patient.id} value={patient.id}>
-              {patient.name}
-            </option>
-          ))}
-        </Form.Control>
-      </Form.Group> */}
-
       <Form.Group>
         <Form.Label>Body Temperature</Form.Label>
         <Form.Control
@@ -115,6 +83,7 @@ function VitalsForm({ selectedPatient }) {
           onChange={handleChange}
         />
       </Form.Group>
+
       <Form.Group className='mt-3'>
         <Form.Label>Heart Rate</Form.Label>
         <Form.Control
@@ -124,6 +93,7 @@ function VitalsForm({ selectedPatient }) {
           onChange={handleChange}
         />
       </Form.Group>
+
       <Form.Group>
         <Form.Label className='mt-3'>Blood Pressure</Form.Label>
         <Form.Control
@@ -133,12 +103,23 @@ function VitalsForm({ selectedPatient }) {
           onChange={handleChange}
         />
       </Form.Group>
+
       <Form.Group className='mb-4'>
         <Form.Label className='mt-3'>Respiratory Rate</Form.Label>
         <Form.Control
           type='number'
           name='respiratoryRate'
           value={vitals.respiratoryRate}
+          onChange={handleChange}
+        />
+      </Form.Group>
+
+      <Form.Group>
+        <Form.Label className='mt-3'>Weight (kg)</Form.Label>
+        <Form.Control
+          type='number'
+          name='bodyWeight'
+          value={vitals.bodyWeight}
           onChange={handleChange}
         />
       </Form.Group>

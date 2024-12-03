@@ -7,19 +7,13 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
-      name: "nursePortalApp",
-      filename: "remoteEntry.js",
-      exposes: {
-        "./App": "./src/App",
+      name: "shellApp",
+      remotes: {
+        authenticationApp: "http://localhost:3001/assets/remoteEntry.js",
+        nursePortalApp: "http://localhost:3002/assets/remoteEntry.js",
+        patientPortalApp: "http://localhost:3003/assets/remoteEntry.js",
       },
       shared: ["react", "react-dom", "@apollo/client", "graphql"],
     }),
   ],
-
-  build: {
-    modulePreload: false,
-    target: "esnext",
-    minify: false,
-    cssCodeSplit: false,
-  },
 });

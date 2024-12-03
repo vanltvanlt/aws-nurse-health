@@ -15,17 +15,6 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <Dashboard />
-      {/* <Router>
-        <div className='app-container'>
-          <Routes>
-            <Route path='/' element={<NurseDashboard />} />
-            <Route path='/assign-patients' element={<AssignPatients />} />
-            <Route path='/enter-vital-signs' element={<VitalsForm />} />
-            <Route path='/clinical-visits' element={<ClinicalVisits />} />
-            <Route path='/motivational-tips' element={<MotivationalTips />} />
-          </Routes>
-        </div>
-      </Router> */}
     </ApolloProvider>
   );
 }

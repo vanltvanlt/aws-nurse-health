@@ -54,25 +54,10 @@ function AuthenticationForm() {
     onCompleted: (data) => {
       const token = data.login.token; // Extract token from response
       localStorage.setItem("authToken", token); // Store token in local storage
-      console.log("Token: ", token);
-      console.log("data: ", data);
+      localStorage.setItem("userId", data.login.id); // Store role in local storage
 
-      // Dispatch custom event upon successful login
-      if (data.login.role === "nurse") {
-        window.dispatchEvent(
-          new CustomEvent("auth-Success", { detail: { token } }),
-
-          // Redirect to dashboard
-          window.location.assign("http://localhost:3002/")
-        );
-      } else {
-        window.dispatchEvent(
-          new CustomEvent("auth-Success", { detail: { token } }),
-
-          // Redirect to dashboard
-          window.location.assign("http://localhost:5173/")
-        );
-      }
+      // Reload the page after logout
+      window.location.reload();
     },
 
     onError: (error) => setAuthError(error.message || "Login failed"),

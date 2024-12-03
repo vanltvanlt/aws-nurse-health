@@ -19,6 +19,7 @@ const typeDefs = gql`
     heartRate: Int!
     bloodPressure: String!
     respiratoryRate: Int!
+    bodyWeight: Float!
     date: String!
   }
 
@@ -38,23 +39,33 @@ const typeDefs = gql`
 
   type Mutation {
     login(email: String!, password: String!): User
+
     register(
       name: String!
       email: String!
       password: String!
       role: String!
     ): User
+
+    logout: Boolean
+
     assignPatientToNurse(patientId: ID!, nurseId: ID!): User
+
     addVitalSign(
       userId: ID!
       bodyTemperature: Float!
       heartRate: Int!
       bloodPressure: String!
       respiratoryRate: Int!
+      bodyWeight: Float!
     ): VitalSign
+
     addMotivationalTip(content: String!): MotivationalTip
+
     updateMotivationalTip(id: ID!, content: String!): MotivationalTip
+
     deleteMotivationalTip(id: ID!): MotivationalTip
+
     updateUser(
       id: ID!
       name: String

@@ -5,13 +5,15 @@ const VitalSign = require("../models/VitalSigns");
 const MotivationalTip = require("../models/MotivationalTip");
 
 const resolvers = {
+  // ****************** QUERIES ******************
   Query: {
+    // ------------------ User ------------------
     currentUser: async (_, __, { req }) => {
       const token = req.cookies["token"];
       if (!token) {
         console.error("No token found in cookies");
         return null;
-      };
+      }
       try {
         const decoded = jwt.verify(token, "your_secret_key");
         return User.findById(decoded.id);
@@ -20,6 +22,7 @@ const resolvers = {
         return null;
       }
     },
+
     getUser: async (_, { id }) => {
       return await User.findById(id)
         .populate("name")
@@ -30,35 +33,48 @@ const resolvers = {
         .populate("vitalSigns")
         .populate("motivationalTips");
     },
+
     listUsers: async (_, { role }) => {
-      return await User.find(role ? { role } : {}).populate("assignedPatients").populate("assignedNurse");
+      return await User.find(role ? { role } : {})
+        .populate("assignedPatients")
+        .populate("assignedNurse");
     },
+
+    // ------------------ Motivational Tips ------------------
     listMotivationalTips: async () => {
       try {
-        return await MotivationalTip.find().populate("user").sort({ createdAt: -1 }); // Sort by most recent
+        return await MotivationalTip.find()
+          .populate("user")
+          .sort({ createdAt: -1 }); // Sort by most recent
       } catch (error) {
-        throw new Error('Failed to fetch motivational tips: ' + error.message);
+        throw new Error("Failed to fetch motivational tips: " + error.message);
       }
     },
   },
 
+  // ****************** MUTATIONS ******************
   Mutation: {
+    // ------------------ User ------------------
     login: async (_, { email, password }, { res }) => {
       const user = await User.findOne({ email });
       if (!user) {
         throw new Error("User not found");
       }
-  
+
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
         throw new Error("Invalid password");
       }
-  
+
       // Generate a JWT token
-      const token = jwt.sign({ id: user._id, role: user.role }, "your_secret_key", {
-        expiresIn: "1d",
-      });
-  
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+        "your_secret_key",
+        {
+          expiresIn: "1d",
+        }
+      );
+
       // Store token in an HTTP-only cookie
       res.cookie("token", token, {
         httpOnly: true,
@@ -70,20 +86,32 @@ const resolvers = {
 
       console.log("Logged in user: ", user);
       console.log("Token: ", token);
-  
+
       return user; // Indicating successful login
     },
+
     register: async (_, { name, email, password, role }) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = new User({ name, email, password: hashedPassword, role });
       await user.save();
       return user;
-    },updateUser: async (_, { id, name, email, password, role, assignedNurse, assignedPatients }) => {
+    },
+
+    logout: async (_, __, { res }) => {
+      console.log("Logging out user");
+      res.clearCookie("token");
+      return true;
+    },
+
+    updateUser: async (
+      _,
+      { id, name, email, password, role, assignedNurse, assignedPatients }
+    ) => {
       const user = await User.findById(id);
       if (!user) {
         throw new Error("User not found");
       }
-    
+
       // Update user fields if provided
       if (name) user.name = name;
       if (email) user.email = email;
@@ -92,7 +120,7 @@ const resolvers = {
         user.password = hashedPassword;
       }
       if (role) user.role = role;
-    
+
       // Update relationships
       if (assignedNurse && user.role === "patient") {
         const nurse = await User.findById(assignedNurse);
@@ -101,23 +129,32 @@ const resolvers = {
         }
         user.assignedNurse = nurse._id;
       }
-    
+
       if (assignedPatients && user.role === "nurse") {
-        const patients = await User.find({ _id: { $in: assignedPatients }, role: "patient" });
+        const patients = await User.find({
+          _id: { $in: assignedPatients },
+          role: "patient",
+        });
         if (patients.length !== assignedPatients.length) {
           throw new Error("One or more assigned patients not found or invalid");
         }
         user.assignedPatients = assignedPatients;
       }
-    
+
       await user.save();
       return user;
-    },    
+    },
+
     assignPatientToNurse: async (_, { patientId, nurseId }) => {
       const nurse = await User.findById(nurseId);
       const patient = await User.findById(patientId);
 
-      if (!nurse || !patient || nurse.role !== "nurse" || patient.role !== "patient") {
+      if (
+        !nurse ||
+        !patient ||
+        nurse.role !== "nurse" ||
+        patient.role !== "patient"
+      ) {
         throw new Error("Invalid nurse or patient ID");
       }
 
@@ -129,19 +166,33 @@ const resolvers = {
 
       return nurse;
     },
-    addVitalSign: async (_, { userId, bodyTemperature, heartRate, bloodPressure, respiratoryRate }) => {
-      const vitalSign = new VitalSign({ user: userId, bodyTemperature, heartRate, bloodPressure, respiratoryRate });
+
+    // ------------------ Vital Signs ------------------
+    addVitalSign: async (
+      _,
+      { userId, bodyTemperature, heartRate, bloodPressure, respiratoryRate }
+    ) => {
+      const vitalSign = new VitalSign({
+        user: userId,
+        bodyTemperature,
+        heartRate,
+        bloodPressure,
+        respiratoryRate,
+      });
       await vitalSign.save();
       return vitalSign;
     },
-    addMotivationalTip: async (_, { content }, {user}) => {
+
+    // ------------------ Motivational Tips ------------------
+    addMotivationalTip: async (_, { content }, { user }) => {
       try {
         const newTip = new MotivationalTip({ user: user.id, content });
         return await newTip.save();
       } catch (error) {
-        throw new Error('Failed to add motivational tip: ' + error.message);
+        throw new Error("Failed to add motivational tip: " + error.message);
       }
     },
+
     updateMotivationalTip: async (_, { id, content }) => {
       try {
         const updatedTip = await MotivationalTip.findByIdAndUpdate(
@@ -150,36 +201,42 @@ const resolvers = {
           { new: true }
         );
         if (!updatedTip) {
-          throw new Error('Motivational tip not found');
+          throw new Error("Motivational tip not found");
         }
         return updatedTip;
       } catch (error) {
-        throw new Error('Failed to update motivational tip: ' + error.message);
+        throw new Error("Failed to update motivational tip: " + error.message);
       }
     },
+
     deleteMotivationalTip: async (_, { id }) => {
       try {
         const deletedTip = await MotivationalTip.findByIdAndDelete(id);
         if (!deletedTip) {
-          throw new Error('Motivational tip not found');
+          throw new Error("Motivational tip not found");
         }
         return deletedTip;
       } catch (error) {
-        throw new Error('Failed to delete motivational tip: ' + error.message);
+        throw new Error("Failed to delete motivational tip: " + error.message);
       }
-    }
+    },
   },
 
   User: {
     assignedPatients: async (user) => {
-      return user.role === "nurse" ? User.find({ assignedNurse: user._id }) : null;
+      return user.role === "nurse"
+        ? User.find({ assignedNurse: user._id })
+        : null;
     },
+
     assignedNurse: async (user) => {
       return user.role === "patient" ? User.findById(user.assignedNurse) : null;
     },
+
     vitalSigns: async (user) => {
       return await VitalSign.find({ user: user._id });
     },
+
     motivationalTips: async (user) => {
       return await MotivationalTip.find({ user: user._id });
     },
