@@ -55,6 +55,7 @@ export default function AlertPopup() {
           <tr>
             <th>Patient</th>
             <th>Created At</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>

@@ -250,16 +250,17 @@ const resolvers = {
     },
 
     // ------------------ Alerts ------------------
-    addAlert: async (_, { userId }) => {
+    addAlert: async (_, __, { user }) => {
       try {
-        const newAlert = new Alert({ user: userId });
+        console.log("Adding alert for user: ", user.id);
+        const newAlert = new Alert({ user: user.id });
         return await newAlert.save();
       } catch (error) {
         throw new Error("Failed to add alert: " + error.message);
       }
     },
 
-    deleteAlert: async (_, { id }) => {
+    deleteAlert: async (_, __, { id }) => {
       try {
         const deletedAlert = await Alert.findByIdAndDelete(id);
         if (!deletedAlert) {

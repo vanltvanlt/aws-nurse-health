@@ -72,7 +72,7 @@ export default function Dashboard() {
           <div className='dashboard-left'>
             <div className='dashboard-tile dashboard-emergency-alert'>
               <h2 className='dashboad-title'>Emergency Alert</h2>
-              <EmergencyAlert />
+              <EmergencyAlert currentAuthUser={currentAuthUser} />
             </div>
 
             <div className='dashboard-tile dashboard-vitals'>

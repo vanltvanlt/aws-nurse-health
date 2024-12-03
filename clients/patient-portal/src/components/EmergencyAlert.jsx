@@ -1,17 +1,16 @@
 import { Button } from "react-bootstrap";
 import { gql, useMutation } from "@apollo/client";
-import PropTypes from "prop-types";
 
 const ADD_ALERT_MUTATION = gql`
-  mutation AddAlert($userId: String!) {
-    addAlert ($userId: String){
+  mutation AddAlert {
+    addAlert {
       id
       createdAt
     }
   }
 `;
 
-export default function EmergencyAlert({ currentAuthUser }) {
+export default function EmergencyAlert() {
   // Mutations
   const [addAlert] = useMutation(ADD_ALERT_MUTATION);
 
@@ -22,7 +21,8 @@ export default function EmergencyAlert({ currentAuthUser }) {
       await addAlert();
       alert("Alert sent!");
     } catch (err) {
-      alert("Error adding tip: " + err.message);
+      console.log(err);
+      alert("Error adding Alert: " + err.message);
     }
   };
 
@@ -34,7 +34,3 @@ export default function EmergencyAlert({ currentAuthUser }) {
     </div>
   );
 }
-
-EmergencyAlert.propTypes = {
-  currentAuthUser: PropTypes.object,
-};
