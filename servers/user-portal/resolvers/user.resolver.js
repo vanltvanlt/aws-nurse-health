@@ -250,9 +250,9 @@ const resolvers = {
     },
 
     // ------------------ Alerts ------------------
-    addAlert: async (_, { user }) => {
+    addAlert: async (_, { userId }) => {
       try {
-        const newAlert = new Alert({ user: user.id });
+        const newAlert = new Alert({ user: userId });
         return await newAlert.save();
       } catch (error) {
         throw new Error("Failed to add alert: " + error.message);
