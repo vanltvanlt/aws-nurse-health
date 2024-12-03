@@ -5,7 +5,7 @@ import { gql, useQuery } from "@apollo/client";
 import MotivationalTips from "./MotivationalTips";
 import ClinicalVisits from "./ClinicalVisits";
 import VitalsForm from "./VitalsForm";
-import AssignPatients from "./AssignPatient";
+import AssignPatients from "./SymptomRisk";
 import AlertPopup from "./AlertPopup";
 
 // GraphQL query to check the current user's authentication status

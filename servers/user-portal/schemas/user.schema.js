@@ -11,6 +11,8 @@ const typeDefs = gql`
     assignedNurse: User
     vitalSigns: [VitalSign]
     motivationalTips: [MotivationalTip]
+    symptomsRiskPrediction: String
+    symptomsList: [String]
   }
 
   type VitalSign {
@@ -36,6 +38,11 @@ const typeDefs = gql`
     user: User
   }
 
+  type SymptomsChecklistDetails {
+    symptomsRiskPrediction: String
+    symptomsList: [String]
+  }
+
   type Query {
     currentUser: User
     getUser(id: ID!): User
@@ -44,6 +51,8 @@ const typeDefs = gql`
     listMotivationalTips: [MotivationalTip]
 
     listAlerts: [Alert]
+
+    getSymptomsChecklistDetails: SymptomsChecklistDetails
   }
 
   type Mutation {

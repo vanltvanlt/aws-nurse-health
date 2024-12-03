@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { gql, useMutation } from "@apollo/client";
+import PropTypes from "prop-types";
 
 const ADD_VITAL_SIGN_MUTATION = gql`
   mutation AddVitalSign(
@@ -30,44 +31,56 @@ const ADD_VITAL_SIGN_MUTATION = gql`
   }
 `;
 
-function VitalsForm() {
-  const [info, setInfo] = useState({
+export default function VitalsForm({ currentAuthUser }) {
+  const [vitals, setVitals] = useState({
+    temperature: "",
     heartRate: "",
     bloodPressure: "",
-    bodyWeight: "",
-    bodyTemperature: "",
     respiratoryRate: "",
+    bodyWeight: "",
   });
+  const [message, setMessage] = useState("");
 
   // Mutation to add vital signs
   const [addVitalSign] = useMutation(ADD_VITAL_SIGN_MUTATION);
 
   const handleChange = (event) => {
-    setInfo({ ...info, [event.target.name]: event.target.value });
+    setVitals({ ...vitals, [event.target.name]: event.target.value });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let authUser = null;
+    setMessage("");
 
-    if (!authUser) {
-      alert("Please select a patient");
-      return;
+    if (!currentAuthUser) {
+      setMessage("Please log in to add vital signs.");
+    } else {
+      setMessage("USER LOGED IN: " + currentAuthUser.id);
     }
 
     try {
       await addVitalSign({
         variables: {
-          userId: authUser.id,
-          bodyTemperature: parseFloat(info.temperature),
-          heartRate: parseInt(info.heartRate, 10),
-          bloodPressure: info.bloodPressure,
-          respiratoryRate: parseInt(info.respiratoryRate, 10),
-          bodyWeight: parseFloat(info.bodyWeight),
+          userId: currentAuthUser.id,
+          bodyTemperature: parseFloat(vitals.temperature),
+          heartRate: parseInt(vitals.heartRate, 10),
+          bloodPressure: vitals.bloodPressure,
+          respiratoryRate: parseInt(vitals.respiratoryRate, 10),
+          bodyWeight: parseFloat(vitals.bodyWeight),
         },
       });
-      alert("Vital signs added successfully!");
+
+      // Clear the form
+      setVitals({
+        temperature: "",
+        heartRate: "",
+        bloodPressure: "",
+        respiratoryRate: "",
+        bodyWeight: "",
+      });
+
+      setMessage("Vital signs added successfully!");
     } catch (err) {
       alert("Error adding vital signs: " + err.message);
     }
@@ -76,21 +89,21 @@ function VitalsForm() {
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group>
-        <Form.Group>
-          <Form.Label className='mt-3'>Temperature (C°)</Form.Label>
-          <Form.Control
-            type='number'
-            name='bodyTemperature'
-            value={info.bodyTemperature}
-            onChange={handleChange}
-          />
-        </Form.Group>
+        <Form.Label>Body Temperature (C°)</Form.Label>
+        <Form.Control
+          type='number'
+          name='temperature'
+          value={vitals.temperature}
+          onChange={handleChange}
+        />
+      </Form.Group>
 
-        <Form.Label className='mt-3'>Heart Rate (bpm)</Form.Label>
+      <Form.Group className='mt-3'>
+        <Form.Label>Heart Rate (bpm)</Form.Label>
         <Form.Control
           type='number'
           name='heartRate'
-          value={info.heartRate}
+          value={vitals.heartRate}
           onChange={handleChange}
         />
       </Form.Group>
@@ -100,17 +113,17 @@ function VitalsForm() {
         <Form.Control
           type='text'
           name='bloodPressure'
-          value={info.bloodPressure}
+          value={vitals.bloodPressure}
           onChange={handleChange}
         />
       </Form.Group>
 
       <Form.Group className='mt-3'>
-        <Form.Label>Respiratory Rate (breaths/min)</Form.Label>
+        <Form.Label className='mt-3'>Respiratory Rate (breaths/min)</Form.Label>
         <Form.Control
           type='number'
           name='respiratoryRate'
-          value={info.respiratoryRate}
+          value={vitals.respiratoryRate}
           onChange={handleChange}
         />
       </Form.Group>
@@ -120,10 +133,12 @@ function VitalsForm() {
         <Form.Control
           type='number'
           name='bodyWeight'
-          value={info.bodyWeight}
+          value={vitals.bodyWeight}
           onChange={handleChange}
         />
       </Form.Group>
+
+      {message && <p>{message}</p>}
 
       <Button type='submit' className='button'>
         Submit Information
@@ -132,4 +147,6 @@ function VitalsForm() {
   );
 }
 
-export default VitalsForm;
+VitalsForm.propTypes = {
+  currentAuthUser: PropTypes.object.isRequired,
+};

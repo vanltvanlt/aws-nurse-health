@@ -1,11 +1,11 @@
 import { Container } from "react-bootstrap";
 import Navbar from "./navbar";
-import DailyInfoForm from "./VitalsForm";
 import EmergencyAlert from "./EmergencyAlert";
 import SymptomChecklist from "./SymptomChecklist";
 import "../styles/Dashboard.css";
 import { gql, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
+import VitalsForm from "./VitalsForm";
 
 // GraphQL query to check the current user's authentication status
 const CURRENT_USER_QUERY = gql`
@@ -62,7 +62,7 @@ export default function Dashboard() {
         <div className='dashboard-tile dashboard-header'>
           <h2 className='dashboad-title'>
             ⚕️ Patient Portal
-            {currentAuthUser?.name ? "- Welcome " + currentAuthUser?.name : ""}
+            {currentAuthUser?.name ? " - Welcome " + currentAuthUser?.name : ""}
           </h2>
           <p>Daily Tip: {tipData?.getRandomMotivationalTip?.content}</p>
         </div>
@@ -72,12 +72,12 @@ export default function Dashboard() {
           <div className='dashboard-left'>
             <div className='dashboard-tile dashboard-emergency-alert'>
               <h2 className='dashboad-title'>Emergency Alert</h2>
-              <EmergencyAlert currentAuthUser={currentAuthUser} />
+              <EmergencyAlert />
             </div>
 
             <div className='dashboard-tile dashboard-vitals'>
               <h2 className='dashboad-title'>Enter you Vitals</h2>
-              <DailyInfoForm />
+              <VitalsForm currentAuthUser={currentAuthUser} />
             </div>
           </div>
 

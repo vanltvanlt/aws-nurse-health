@@ -31,7 +31,7 @@ const ADD_VITAL_SIGN_MUTATION = gql`
   }
 `;
 
-function VitalsForm({ selectedPatient, updatePatient }) {
+function VitalsForm({ selectedPatient }) {
   const [vitals, setVitals] = useState({
     temperature: "",
     heartRate: "",
@@ -39,6 +39,7 @@ function VitalsForm({ selectedPatient, updatePatient }) {
     respiratoryRate: "",
     bodyWeight: "",
   });
+  const [message, setMessage] = useState("");
 
   // Mutation to add vital signs
   const [addVitalSign] = useMutation(ADD_VITAL_SIGN_MUTATION);
@@ -50,6 +51,7 @@ function VitalsForm({ selectedPatient, updatePatient }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    setMessage("");
     try {
       await addVitalSign({
         variables: {
@@ -71,8 +73,7 @@ function VitalsForm({ selectedPatient, updatePatient }) {
         bodyWeight: "",
       });
 
-      // Update the selected patient with the new vital signs
-      updatePatient();
+      setMessage("Vital signs added successfully!");
     } catch (err) {
       alert("Error adding vital signs: " + err.message);
     }
@@ -129,6 +130,9 @@ function VitalsForm({ selectedPatient, updatePatient }) {
           onChange={handleChange}
         />
       </Form.Group>
+
+      {message && <p>{message}</p>}
+
       <Button type='submit' className='button'>
         Submit Vitals
       </Button>
@@ -138,7 +142,6 @@ function VitalsForm({ selectedPatient, updatePatient }) {
 
 VitalsForm.propTypes = {
   selectedPatient: PropTypes.object.isRequired,
-  updatePatient: PropTypes.func.isRequired,
 };
 
 export default VitalsForm;

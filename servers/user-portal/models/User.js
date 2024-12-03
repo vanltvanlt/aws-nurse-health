@@ -1,12 +1,14 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  name: { // Update username to name for simplicity
+  name: {
+    // Update username to name for simplicity
     type: String,
     required: true,
   },
-  email: { // Adding email to be used as the main identifier for login and registration
+  email: {
+    // Adding email to be used as the main identifier for login and registration
     type: String,
     required: true,
     unique: true,
@@ -17,19 +19,19 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['nurse', 'patient'],
+    enum: ["nurse", "patient"],
     required: true,
   },
   vitalSigns: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'VitalSigns',
+      ref: "VitalSigns",
     },
   ],
   motivationalTips: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'MotivationalTip',
+      ref: "MotivationalTip",
     },
   ],
   assignedPatients: [
@@ -38,10 +40,17 @@ const UserSchema = new Schema({
       ref: "User",
     },
   ],
-  assignedNurse: { 
+  assignedNurse: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  symptomsRiskPrediction: {
+    type: String,
+    enum: ["low", "med", "high"],
+  },
+  symptomsList: {
+    type: [String],
+  },
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);
