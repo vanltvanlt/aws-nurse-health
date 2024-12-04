@@ -45,6 +45,8 @@ const SymptomsRisk = ({ selectedPatient }) => {
       )}
 
       <h3 className='mt-4'>Risk Prediction</h3>
+
+      
     </div>
   );
 };

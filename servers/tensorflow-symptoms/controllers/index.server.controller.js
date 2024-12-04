@@ -1,9 +1,14 @@
-const tf = require("@tensorflow/tfjs");
+const tf = require("@tensorflow/tfjs-node");
+const fs = require("fs");
+const path = require("path");
 
 const dataset = require("../dataset.json");
 const datasetTesting = require("../dataset-testing.json");
 
-exports.trainAndPredict = function (req, res) {
+const modelDir = path.join(__dirname, "../models");
+const modelPath = path.join(modelDir, "tensorflow", "model.json");
+
+async function trainModel() {
   console.log("training data: ");
 
   // Step 1: Extract unique symptoms
@@ -49,13 +54,6 @@ exports.trainAndPredict = function (req, res) {
     )
   );
 
-  // Ensure testing data is in the correct format
-  const testingData = tf.tensor2d(
-    datasetTesting.map((item) =>
-      allSymptoms.map((symptom) => (item.symptoms.includes(symptom) ? 1 : 0))
-    )
-  );
-
   // Build the model
   const model = tf.sequential();
 
@@ -95,41 +93,93 @@ exports.trainAndPredict = function (req, res) {
 
   console.log(model.summary());
 
-  async function run() {
-    const startTime = Date.now();
+  const startTime = Date.now();
 
-    // Train the model
-    await model.fit(trainingData, outputData, {
-      epochs: 100, // Experiment with the number of epochs
-      callbacks: {
-        // Callbacks for monitoring training progress
-        onEpochEnd: async (epoch, log) => {
-          const elapsedTime = Date.now() - startTime;
-          console.log(
-            `Epoch ${epoch}: loss = ${log.loss}, elapsed time = ${elapsedTime}ms`
-          );
-        },
+  // Train the model
+  await model.fit(trainingData, outputData, {
+    epochs: 100, // Experiment with the number of epochs
+    callbacks: {
+      // Callbacks for monitoring training progress
+      onEpochEnd: async (epoch, log) => {
+        const elapsedTime = Date.now() - startTime;
+        console.log(
+          `Epoch ${epoch}: loss = ${log.loss}, elapsed time = ${elapsedTime}ms`
+        );
       },
-    });
+    },
+  });
 
-    // Predict using test data
-    const results = model.predict(testingData);
-
-    // Process prediction results
-    const predictionArray = await results.array();
-    console.log("row: ", predictionArray);
-
-    const predictions = predictionArray.map((row) => {
-      const highestProbIndex = row.findIndex((val) => val === Math.max(...row));
-      return riskLevels[highestProbIndex]; // Map index to disease name
-    });
-
-    // Log and send predictions (adjust output based on your needs)
-    console.log("Predicted diseases:", predictions);
-
-    // Optionally send predictions to a client (if part of a server-side API)
-    res.status(200).send({ predictions });
+  // Ensure the model directory exists
+  if (!fs.existsSync(modelDir)) {
+    fs.mkdirSync(modelDir);
   }
 
-  run();
+  // Save the model
+  await model.save(`file://${modelPath}`);
+  console.log("Model saved to", modelPath);
+}
+
+async function loadModel() {
+  if (fs.existsSync(modelPath)) {
+    const model = await tf.loadLayersModel(`file://${modelPath}`);
+    console.log("Model loaded from", modelPath);
+    return model;
+  } else {
+    console.log("Model not found, training a new one...");
+    await trainModel();
+    return await tf.loadLayersModel(`file://${modelPath}`);
+  }
+}
+
+exports.predictRisk = async function (req, res) {
+  console.log("req.body: ", req.body);
+
+  const providedSymptoms = req?.body?.symptoms;
+
+  if (!providedSymptoms) {
+    return res.status(400).send("Symptoms are required");
+  }
+
+  const model = await loadModel();
+
+  // Ensure testing data is in the correct format
+  const allSymptoms = [
+    ...new Set(
+      dataset.flatMap((item) =>
+        item.symptoms.split(",").map((symptom) => symptom.trim())
+      )
+    ),
+  ];
+
+  console.log("allSymptoms: ", allSymptoms);
+
+  const testingData = tf.tensor2d(
+    datasetTesting.map((item) =>
+      allSymptoms.map((symptom) => (item.symptoms.includes(symptom) ? 1 : 0))
+    )
+  );
+
+  // Predict using test data
+  const results = model.predict(testingData);
+
+  // Process prediction results
+  const predictionArray = await results.array();
+  console.log("row: ", predictionArray);
+
+  const riskLevels = ["low", "medium", "high"];
+  const predictions = predictionArray.map((row) => {
+    const highestProbIndex = row.findIndex((val) => val === Math.max(...row));
+    return riskLevels[highestProbIndex]; // Map index to disease name
+  });
+
+  // Log and send predictions (adjust output based on your needs)
+  console.log("Predicted diseases:", predictions);
+
+  // Optionally send predictions to a client (if part of a server-side API)
+  res.status(200).send({ predictions });
 };
+
+// Check if the model file exists before training
+if (!fs.existsSync(modelPath)) {
+  trainModel();
+}
