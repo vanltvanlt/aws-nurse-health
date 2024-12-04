@@ -1,5 +1,4 @@
 import { Container } from "react-bootstrap";
-import Navbar from "./navbar";
 import EmergencyAlert from "./EmergencyAlert";
 import SymptomChecklist from "./SymptomChecklist";
 import "../styles/Dashboard.css";
@@ -56,7 +55,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <Navbar currentAuthUser={currentAuthUser} />
       <Container className='mb-5'>
         {/* ************ HEADER ************ */}
         <div className='dashboard-tile dashboard-header'>

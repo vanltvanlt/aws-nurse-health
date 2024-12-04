@@ -8,12 +8,12 @@
 
 .dashboard-tile {
   border-radius: 15px;
-  border-top: 1px solid #e9ecef;
+  border: 1px solid #e9ecef;
   backdrop-filter: blur(10px);
   padding: 1.5rem;
   width: 100%;
   box-sizing: border-box;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
 }
 
 .dashboard-header {

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Navbar from "./Navbar";
 import { Form, Spinner, Alert, Container } from "react-bootstrap";
 import { gql, useQuery } from "@apollo/client";
 import MotivationalTips from "./MotivationalTips";
@@ -70,7 +69,6 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Navbar currentAuthUser={currentAuthUser} />
       <Container className='mb-5'>
         {/* ************ POPUP MOTIVATIONAL TIPS ************ */}
         {focus == "Tips" && (
