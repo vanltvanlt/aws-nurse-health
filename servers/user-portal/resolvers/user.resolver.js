@@ -271,6 +271,28 @@ const resolvers = {
         throw new Error("Failed to delete alert: " + error.message);
       }
     },
+    saveSymptoms: async (_, { patientId, symptoms }, { models }) => {
+      try {
+        
+        const patient = await models.Patient.findById(patientId);
+        if (!patient) {
+          throw new Error("Patient not found");
+        }
+
+        
+        patient.symptoms = symptoms;
+        await patient.save();
+
+        
+        const riskPrediction = await runTensorFlowPrediction(symptoms);
+        patient.risk = riskPrediction;
+        await patient.save();
+
+        return patient;
+      } catch (error) {
+        throw new Error("Failed to save symptoms: " + error.message);
+      }
+    },
   },
 
   User: {
