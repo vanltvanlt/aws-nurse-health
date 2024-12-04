@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import "../styles/SymptomChecklist.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { gql, useMutation } from "@apollo/client";
+
+const ADD_SYMPTOMS_MUTATION = gql`
+  mutation AddSymptoms($symptoms: [String]!) {
+    addSymptoms(symptoms: $symptoms) {
+      id
+      symptoms
+    }
+  }
+`;
 
 export default function SymptomChecklist() {
   const symptoms = [
@@ -36,8 +46,11 @@ export default function SymptomChecklist() {
     "Frequent Urination",
     "Blurred Vision",
   ];
-
+  const [message, setMessage] = useState("");
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
+
+  // Mutation to add vital signs
+  const [addSymptoms] = useMutation(ADD_SYMPTOMS_MUTATION);
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
@@ -50,8 +63,29 @@ export default function SymptomChecklist() {
     console.log(selectedSymptoms);
   }, [selectedSymptoms]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    setMessage("");
+
+    try {
+      await addSymptoms({
+        variables: {
+          symptoms: selectedSymptoms,
+        },
+      });
+
+      setSelectedSymptoms([]);
+
+      // Uncheck all checkboxes
+      document.querySelectorAll("input[type=checkbox]").forEach((checkbox) => {
+        checkbox.checked = false;
+      });
+
+      setMessage("Vital signs added successfully!");
+    } catch (err) {
+      alert("Error adding vital signs: " + err.message);
+    }
   };
 
   return (
@@ -66,6 +100,9 @@ export default function SymptomChecklist() {
           />
         ))}
       </div>
+
+      {message && <p>{message}</p>}
+
       <Button type='submit' className='button'>
         Submit Symptoms
       </Button>

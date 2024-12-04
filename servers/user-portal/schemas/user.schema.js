@@ -12,7 +12,7 @@ const typeDefs = gql`
     vitalSigns: [VitalSign]
     motivationalTips: [MotivationalTip]
     symptomsRiskPrediction: String
-    symptomsList: [String]
+    symptoms: [String]
   }
 
   type VitalSign {
@@ -96,6 +96,8 @@ const typeDefs = gql`
       assignedNurse: ID
       assignedPatients: [ID!]
     ): User
+
+    addSymptoms(symptoms: [String]!): User
   }
 `;
 

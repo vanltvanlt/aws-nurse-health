@@ -24,8 +24,7 @@ exports.trainAndPredict = function (req, res) {
     )
   );
 
-  // Generate a list of unique diseases
-  //   const uniqueDiseases = [...new Set(dataset.map((item) => item.disease))];
+  // Generate a list of risk levels
   const riskLevels = ["low", "medium", "high"];
 
   const cleanRiskLevel = (dataset) => {

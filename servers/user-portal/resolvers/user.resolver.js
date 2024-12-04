@@ -25,6 +25,7 @@ const resolvers = {
     },
 
     getUser: async (_, { id }) => {
+      
       return await User.findById(id)
         .populate("name")
         .populate("email")
@@ -32,7 +33,9 @@ const resolvers = {
         .populate("assignedPatients")
         .populate("assignedNurse")
         .populate("vitalSigns")
-        .populate("motivationalTips");
+        .populate("motivationalTips")
+        .populate("symptoms")
+        .populate("symptomsRiskPrediction");
     },
 
     listUsers: async (_, { role }) => {
@@ -269,6 +272,23 @@ const resolvers = {
         return deletedAlert;
       } catch (error) {
         throw new Error("Failed to delete alert: " + error.message);
+      }
+    },
+
+    // ------------------ SYMPTOMS CHECKLIST DETAILS ------------------
+    addSymptoms: async (_, { symptoms }, { user }) => {
+      try {
+        const updatedUser = await User.findByIdAndUpdate(
+          user.id,
+          { symptoms },
+          { new: true }
+        );
+        if (!updatedUser) {
+          throw new Error("Motivational tip not found");
+        }
+        return updatedUser;
+      } catch (error) {
+        throw new Error("Failed to add symptoms: " + error.message);
       }
     },
   },

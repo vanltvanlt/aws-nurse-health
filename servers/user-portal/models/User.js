@@ -48,7 +48,7 @@ const UserSchema = new Schema({
     type: String,
     enum: ["low", "med", "high"],
   },
-  symptomsList: {
+  symptoms: {
     type: [String],
   },
 });

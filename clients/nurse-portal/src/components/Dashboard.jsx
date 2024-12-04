@@ -4,7 +4,7 @@ import { gql, useQuery } from "@apollo/client";
 import MotivationalTips from "./MotivationalTips";
 import ClinicalVisits from "./ClinicalVisits";
 import VitalsForm from "./VitalsForm";
-import AssignPatients from "./SymptomRisk";
+import SymptomRisk from "./SymptomRisk";
 import AlertPopup from "./AlertPopup";
 
 // GraphQL query to check the current user's authentication status
@@ -23,6 +23,8 @@ const CURRENT_USER_QUERY = gql`
         respiratoryRate
         date
       }
+      symptomsRiskPrediction
+      symptoms
     }
   }
 `;
@@ -171,7 +173,7 @@ export default function Dashboard() {
                 <h2 className='dashboad-title'>
                   Latest Symptom Checklist Details
                 </h2>
-                <AssignPatients selectedPatient={selectedPatient} />
+                <SymptomRisk selectedPatient={selectedPatient} />
               </div>
             </div>
           </div>
