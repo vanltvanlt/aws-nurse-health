@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useQuery, gql } from "@apollo/client";
 import "./styles/index.css";
+import Navbar from "./components/Navbar";
 
 const AuthenticationApp = lazy(() => import("authenticationApp/App"));
 const NursePortalApp = lazy(() => import("nursePortalApp/App"));
@@ -64,10 +65,12 @@ function App() {
           <AuthenticationApp />
         ) : role === "patient" ? (
           <>
+            <Navbar currentAuthUser={data.currentUser} />
             <PatientPortalApp />
           </>
         ) : (
           <>
+            <Navbar currentAuthUser={data.currentUser} />
             <NursePortalApp />
           </>
         )}
