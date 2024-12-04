@@ -97,15 +97,6 @@ const typeDefs = gql`
       assignedPatients: [ID!]
     ): User
   }
-  type Mutation {
-    saveSymptoms(patientId: ID!, symptoms: [String!]!): Patient
-  }
-
-  type Patient {
-    id: ID!
-    name: String
-    symptoms: [String!]!
-  }
 `;
 
 module.exports = typeDefs;
