@@ -16,4 +16,7 @@ export default defineConfig({
       shared: ["react", "react-dom", "@apollo/client", "graphql"],
     }),
   ],
+  esbuild: {
+    target: "es2022", // Update this to a compatible version
+  },
 });
