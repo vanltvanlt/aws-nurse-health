@@ -38,15 +38,20 @@ const SymptomsRisk = ({ selectedPatient }) => {
         </Alert>
       ) : (
         selectedPatient &&
-        symptomsData &&
-        symptomsData.getUser.symptoms.map((symptom, index) => (
-          <li key={index}>{symptom}</li>
-        ))
+        symptomsData && (
+          <>
+            {symptomsData.getUser.symptoms.map((symptom, index) => (
+              <li key={index}>{symptom}</li>
+            ))}
+            <h3 className='mt-4'>Risk Prediction</h3>
+            <p>
+              The symptoms show a
+              <b>{symptomsData.getUser.symptomsRiskPrediction}</b> health risk
+              for the patient.
+            </p>
+          </>
+        )
       )}
-
-      <h3 className='mt-4'>Risk Prediction</h3>
-
-      
     </div>
   );
 };

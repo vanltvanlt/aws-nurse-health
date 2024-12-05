@@ -25,7 +25,6 @@ const resolvers = {
     },
 
     getUser: async (_, { id }) => {
-      
       return await User.findById(id)
         .populate("name")
         .populate("email")
@@ -278,14 +277,36 @@ const resolvers = {
     // ------------------ SYMPTOMS CHECKLIST DETAILS ------------------
     addSymptoms: async (_, { symptoms }, { user }) => {
       try {
+        // Get risk prediction based on symptoms
+        // Send symptoms to a machine learning model to get risk prediction GET http://localhost:4002/predictRisk
+        const response = await fetch("http://localhost:4002/predictRisk", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ symptoms: symptoms }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to get risk prediction");
+        }
+
+        const predictionData = await response.json();
+        console.log("Risk prediction data: ", predictionData.prediction);
+
         const updatedUser = await User.findByIdAndUpdate(
           user.id,
-          { symptoms },
+          {
+            symptoms: symptoms,
+            symptomsRiskPrediction: predictionData.prediction,
+          },
           { new: true }
         );
+
         if (!updatedUser) {
           throw new Error("Motivational tip not found");
         }
+
         return updatedUser;
       } catch (error) {
         throw new Error("Failed to add symptoms: " + error.message);

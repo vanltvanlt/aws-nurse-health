@@ -6,7 +6,7 @@ const dataset = require("../dataset.json");
 const datasetTesting = require("../dataset-testing.json");
 
 const modelDir = path.join(__dirname, "../models");
-const modelPath = path.join(modelDir, "tensorflow", "model.json");
+const modelPath = path.join(modelDir, "tensorflow");
 
 async function trainModel() {
   console.log("training data: ");
@@ -38,8 +38,10 @@ async function trainModel() {
         item["risk level"] = "low";
       } else if (item["risk level"].includes("high")) {
         item["risk level"] = "high";
-      } else {
+      } else if (item["risk level"].includes("medium")) {
         item["risk level"] = "medium";
+      } else {
+        item["risk level"] = "low";
       }
       return item;
     });
@@ -97,7 +99,7 @@ async function trainModel() {
 
   // Train the model
   await model.fit(trainingData, outputData, {
-    epochs: 100, // Experiment with the number of epochs
+    epochs: 2000, // Experiment with the number of epochs
     callbacks: {
       // Callbacks for monitoring training progress
       onEpochEnd: async (epoch, log) => {
@@ -110,8 +112,10 @@ async function trainModel() {
   });
 
   // Ensure the model directory exists
-  if (!fs.existsSync(modelDir)) {
-    fs.mkdirSync(modelDir);
+  const modelSaveDir = path.dirname(modelPath);
+  if (!fs.existsSync(modelSaveDir)) {
+    console.log("Creating model directory");
+    fs.mkdirSync(modelSaveDir, { recursive: true });
   }
 
   // Save the model
@@ -121,7 +125,7 @@ async function trainModel() {
 
 async function loadModel() {
   if (fs.existsSync(modelPath)) {
-    const model = await tf.loadLayersModel(`file://${modelPath}`);
+    const model = await tf.loadLayersModel(`file://${modelPath}/model.json`);
     console.log("Model loaded from", modelPath);
     return model;
   } else {
@@ -132,9 +136,7 @@ async function loadModel() {
 }
 
 exports.predictRisk = async function (req, res) {
-  console.log("req.body: ", req.body);
-
-  const providedSymptoms = req?.body?.symptoms;
+  const providedSymptoms = req.body.symptoms;
 
   if (!providedSymptoms) {
     return res.status(400).send("Symptoms are required");
@@ -151,32 +153,28 @@ exports.predictRisk = async function (req, res) {
     ),
   ];
 
-  console.log("allSymptoms: ", allSymptoms);
-
   const testingData = tf.tensor2d(
-    datasetTesting.map((item) =>
-      allSymptoms.map((symptom) => (item.symptoms.includes(symptom) ? 1 : 0))
-    )
+    [
+      allSymptoms.map((symptom) =>
+        providedSymptoms.includes(symptom) ? 1 : 0
+      ),
+    ],
+    [1, allSymptoms.length]
   );
 
   // Predict using test data
-  const results = model.predict(testingData);
+  const results = model.predict(testingData).dataSync();
 
   // Process prediction results
-  const predictionArray = await results.array();
-  console.log("row: ", predictionArray);
-
   const riskLevels = ["low", "medium", "high"];
-  const predictions = predictionArray.map((row) => {
-    const highestProbIndex = row.findIndex((val) => val === Math.max(...row));
-    return riskLevels[highestProbIndex]; // Map index to disease name
-  });
+  const highestProbIndex = results.indexOf(Math.max(...results));
+  const prediction = riskLevels[highestProbIndex];
 
   // Log and send predictions (adjust output based on your needs)
-  console.log("Predicted diseases:", predictions);
+  console.log("Predicted risk level:", prediction);
 
   // Optionally send predictions to a client (if part of a server-side API)
-  res.status(200).send({ predictions });
+  res.status(200).send({ prediction });
 };
 
 // Check if the model file exists before training

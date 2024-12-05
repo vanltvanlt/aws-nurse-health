@@ -46,7 +46,7 @@ const UserSchema = new Schema({
   },
   symptomsRiskPrediction: {
     type: String,
-    enum: ["low", "med", "high"],
+    enum: ["low", "medium", "high"],
   },
   symptoms: {
     type: [String],
