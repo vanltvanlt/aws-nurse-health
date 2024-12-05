@@ -34,14 +34,12 @@ async function trainModel() {
 
   const cleanRiskLevel = (dataset) => {
     return dataset.map((item) => {
-      if (item["risk level"].includes("low")) {
+      if (item["risk level"].toLowerCase().includes("low")) {
         item["risk level"] = "low";
-      } else if (item["risk level"].includes("high")) {
+      } else if (item["risk level"].toLowerCase().includes("high")) {
         item["risk level"] = "high";
-      } else if (item["risk level"].includes("medium")) {
-        item["risk level"] = "medium";
       } else {
-        item["risk level"] = "low";
+        item["risk level"] = "medium";
       }
       return item;
     });
