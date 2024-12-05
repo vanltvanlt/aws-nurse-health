@@ -134,11 +134,16 @@ async function loadModel() {
 }
 
 exports.predictRisk = async function (req, res) {
-  const providedSymptoms = req.body.symptoms;
+  let providedSymptoms = req.body.symptoms;
 
   if (!providedSymptoms) {
     return res.status(400).send("Symptoms are required");
   }
+  console.log("dataset before: ", providedSymptoms);
+
+  // make sure all the symptoms in the dataset are lowercase
+  providedSymptoms = providedSymptoms.map((symptom) => symptom.toLowerCase());
+  console.log("dataset after: ", providedSymptoms);
 
   const model = await loadModel();
 
