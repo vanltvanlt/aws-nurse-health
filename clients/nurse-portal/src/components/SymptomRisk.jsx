@@ -28,29 +28,27 @@ const SymptomsRisk = ({ selectedPatient }) => {
 
   return (
     <div>
-      <h3>List of Syptoms</h3>
-
       {symptomsLoading ? (
         <Spinner animation='border' />
       ) : symptomsError ? (
         <Alert variant='danger'>
           Error loading symptoms: {symptomsError.message}
         </Alert>
+      ) : selectedPatient && symptomsData.getUser.SymptomsRisk ? (
+        <>
+          <h3>List of Syptoms</h3>
+          {symptomsData.getUser.symptoms.map((symptom, index) => (
+            <li key={index}>{symptom}</li>
+          ))}
+          <h3 className='mt-4'>Risk Prediction</h3>
+          <p>
+            The symptoms show a
+            <b>{symptomsData.getUser.symptomsRiskPrediction}</b> health risk for
+            the patient.
+          </p>
+        </>
       ) : (
-        selectedPatient &&
-        symptomsData && (
-          <>
-            {symptomsData.getUser.symptoms.map((symptom, index) => (
-              <li key={index}>{symptom}</li>
-            ))}
-            <h3 className='mt-4'>Risk Prediction</h3>
-            <p>
-              The symptoms show a
-              <b>{symptomsData.getUser.symptomsRiskPrediction}</b> health risk
-              for the patient.
-            </p>
-          </>
-        )
+        <p>No symptoms recorded for this patient</p>
       )}
     </div>
   );
