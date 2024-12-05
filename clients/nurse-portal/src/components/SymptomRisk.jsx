@@ -34,7 +34,7 @@ const SymptomsRisk = ({ selectedPatient }) => {
         <Alert variant='danger'>
           Error loading symptoms: {symptomsError.message}
         </Alert>
-      ) : selectedPatient && symptomsData.getUser.SymptomsRisk ? (
+      ) : selectedPatient && symptomsData.getUser.symptomsRiskPrediction ? (
         <>
           <h3>List of Syptoms</h3>
           {symptomsData.getUser.symptoms.map((symptom, index) => (
@@ -42,7 +42,7 @@ const SymptomsRisk = ({ selectedPatient }) => {
           ))}
           <h3 className='mt-4'>Risk Prediction</h3>
           <p>
-            The symptoms show a
+            The symptoms show a{" "}
             <b>{symptomsData.getUser.symptomsRiskPrediction}</b> health risk for
             the patient.
           </p>
