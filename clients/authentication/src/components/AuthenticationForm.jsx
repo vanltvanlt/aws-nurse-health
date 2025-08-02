@@ -56,8 +56,13 @@ function AuthenticationForm() {
       localStorage.setItem("authToken", token); // Store token in local storage
       localStorage.setItem("userId", data.login.id); // Store role in local storage
 
+      if (data.login.role === "nurse") {
+        window.location.href = "http://localhost:3002";
+      } else {
+        window.location.href = "http://localhost:3003"
+      }
       // Reload the page after logout
-      window.location.reload();
+      // window.location.reload();
     },
 
     onError: (error) => setAuthError(error.message || "Login failed"),

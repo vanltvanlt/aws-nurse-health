@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "workspaces": [
+    "authentication",
+    "nurse-portal",
+    "patient-portal",
+    "shell-app"
+  ],
+  "scripts": {
+    "start:all": "concurrently \"yarn workspace nurse-portal start\" \"yarn workspace patient-portal start\" \"yarn workspace authentication start\" \"yarn workspace shell-app start\""
+  },
+  "dependencies": {
+    "-": "^0.0.1",
+    "yarn": "^1.22.22"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
